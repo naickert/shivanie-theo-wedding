@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none" stroke="#9E821C" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <!-- Outer corner bracket -->
+  <path d="M4 40 L4 4 L40 4" />
+  <!-- Inner echo -->
+  <path d="M8 40 L8 8 L40 8" opacity="0.5" />
+  <!-- Inward kolam curl -->
+  <path d="M40 4 C 28 4, 20 12, 20 24 C 20 32, 28 40, 40 40" />
+  <!-- Petals around the corner pivot -->
+  <path d="M14 14 C 10 18, 10 22, 14 26" />
+  <path d="M14 14 C 18 10, 22 10, 26 14" />
+  <!-- Dot grid (traditional kolam dots) -->
+  <circle cx="14"  cy="14" r="1.4" fill="#9E821C" stroke="none" />
+  <circle cx="22"  cy="14" r="1.0" fill="#9E821C" stroke="none" />
+  <circle cx="14"  cy="22" r="1.0" fill="#9E821C" stroke="none" />
+  <circle cx="30"  cy="14" r="1.0" fill="#9E821C" stroke="none" />
+  <circle cx="14"  cy="30" r="1.0" fill="#9E821C" stroke="none" />
+  <circle cx="22"  cy="22" r="1.4" fill="#D4AF37" stroke="none" />
+  <!-- Lotus tip emerging at corner -->
+  <path d="M40 4 Q 44 12, 48 4 Q 52 12, 56 4" opacity="0.7" />
+  <path d="M4 40 Q 12 44, 4 48 Q 12 52, 4 56" opacity="0.7" />
+</svg>

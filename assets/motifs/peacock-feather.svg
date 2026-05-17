@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 240" fill="none" stroke="#1B4965" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <!-- Stem -->
+  <path d="M50 240 Q48 180, 50 130 Q52 80, 50 40" stroke-width="0.7"/>
+  <!-- Outer feather body (oval) -->
+  <ellipse cx="50" cy="50" rx="34" ry="46" stroke="#D4AF37" stroke-width="0.9"/>
+  <ellipse cx="50" cy="50" rx="26" ry="38" stroke="#9E821C" stroke-width="0.7" opacity="0.8"/>
+  <!-- The "eye" — peacock signature -->
+  <ellipse cx="50" cy="50" rx="14" ry="20" fill="#1B4965" stroke="none"/>
+  <ellipse cx="50" cy="50" rx="10" ry="16" fill="#2D5016" stroke="none"/>
+  <ellipse cx="50" cy="46" rx="6"  ry="10" fill="#8B1538" stroke="none"/>
+  <ellipse cx="50" cy="44" rx="3"  ry="6"  fill="#D4AF37" stroke="none"/>
+  <circle  cx="50" cy="42" r="1.5" fill="#1A1A1A" stroke="none"/>
+  <!-- Barbs (radiating) -->
+  <g stroke="#1B4965" stroke-width="0.5" opacity="0.55">
+    <line x1="50" y1="50" x2="20"  y2="20"/>
+    <line x1="50" y1="50" x2="14"  y2="35"/>
+    <line x1="50" y1="50" x2="12"  y2="50"/>
+    <line x1="50" y1="50" x2="14"  y2="65"/>
+    <line x1="50" y1="50" x2="20"  y2="80"/>
+    <line x1="50" y1="50" x2="80"  y2="20"/>
+    <line x1="50" y1="50" x2="86"  y2="35"/>
+    <line x1="50" y1="50" x2="88"  y2="50"/>
+    <line x1="50" y1="50" x2="86"  y2="65"/>
+    <line x1="50" y1="50" x2="80"  y2="80"/>
+    <line x1="50" y1="50" x2="50"  y2="6"/>
+    <line x1="50" y1="50" x2="50"  y2="94"/>
+  </g>
+  <!-- Side fronds (textured filaments down stem) -->
+  <g stroke="#1B4965" stroke-width="0.4" opacity="0.4">
+    <path d="M50 110 Q 30 115, 24 130"/>
+    <path d="M50 110 Q 70 115, 76 130"/>
+    <path d="M50 140 Q 28 145, 22 162"/>
+    <path d="M50 140 Q 72 145, 78 162"/>
+    <path d="M50 170 Q 30 175, 26 190"/>
+    <path d="M50 170 Q 70 175, 74 190"/>
+    <path d="M50 200 Q 34 205, 30 218"/>
+    <path d="M50 200 Q 66 205, 70 218"/>
+  </g>
+</svg>

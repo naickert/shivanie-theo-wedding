@@ -1,0 +1,49 @@
+{
+  "events": [
+    {
+      "id": "mehendi",
+      "label_en": "Mehendi",
+      "label_ta": "மருதாணி",
+      "date": "2026-12-17",
+      "day": "Thursday",
+      "start": "09:00",
+      "end": "18:00",
+      "venue_id": "brides-home",
+      "dress_code": "Festive Indian, light cottons",
+      "capacity": 80,
+      "open_bar": false,
+      "vegetarian": true,
+      "tone": "Intimate, female-centred, henna and song"
+    },
+    {
+      "id": "nalangu",
+      "label_en": "Nalangu & Sangeeth",
+      "label_ta": "நலங்கு",
+      "date": "2026-12-18",
+      "day": "Friday",
+      "start": "17:00",
+      "end": "01:00",
+      "venue_id": "kendra-hall",
+      "dress_code": "Semi-formal Indian; sarees, lehengas, kurtas, sherwanis",
+      "capacity": 200,
+      "open_bar": true,
+      "vegetarian": true,
+      "tone": "Family bonding games, music, dance"
+    },
+    {
+      "id": "ceremony",
+      "label_en": "Wedding & Reception",
+      "label_ta": "திருமணம்",
+      "date": "2026-12-19",
+      "day": "Saturday",
+      "start": "14:00",
+      "end": "23:00",
+      "venue_id": "maroupi",
+      "dress_code": "Formal Indian or formal Western; Kanjivaram silks encouraged",
+      "capacity": 200,
+      "open_bar": true,
+      "vegetarian": true,
+      "tone": "Sacred ceremony outdoors; feast and dance indoors"
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "venues": {
+    "brides-home": {
+      "id": "brides-home",
+      "name": "The Bride's Home",
+      "address_display": "Address shared in your invitation link",
+      "city": "Durban",
+      "private": true,
+      "parking": "Street parking; please carpool where possible.",
+      "accessibility": "Single-level access. Let us know any needs in your RSVP."
+    },
+    "kendra-hall": {
+      "id": "kendra-hall",
+      "name": "Kendra Hall",
+      "address_display": "5 John Zikhali Road, Greyville, Berea, 4001",
+      "city": "Durban",
+      "phone": "031 309 1824",
+      "maps": "https://maps.google.com/?q=Kendra+Hall+5+John+Zikhali+Road+Greyville+Durban",
+      "parking": "On-site and street parking; arrive a little early on a Friday evening.",
+      "accessibility": "Wheelchair-accessible with a lift to the main hall."
+    },
+    "maroupi": {
+      "id": "maroupi",
+      "name": "Maroupi Wedding Venue",
+      "address_display": "~2 km outside Umhlali, KZN North Coast",
+      "city": "Umhlali",
+      "website": "https://maroupiweddingvenue.co.za",
+      "maps": "https://maps.google.com/?q=Maroupi+Wedding+Venue+Umhlali",
+      "parking": "Ample on-site parking with a guided arrival lane.",
+      "accessibility": "Outdoor ceremony on grass; let us know access needs in your RSVP. Indoor reception is single-level."
+    }
+  }
+}

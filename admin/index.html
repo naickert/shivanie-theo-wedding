@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#8B1538">
+
+  <title>Admin &mdash; Shivanie &amp; Theo</title>
+
+  <link rel="icon" href="../assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Lato:wght@300;400;700&amp;family=Noto+Sans+Tamil:wght@400;500;700&amp;display=swap">
+
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/motifs.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+
+  <!-- LOCK SCREEN -->
+  <section id="admin-lock" class="admin-lock" role="dialog" aria-modal="true" aria-labelledby="admin-lock-title">
+    <div class="admin-lock__box" id="admin-lock-box">
+      <span class="admin-lock__monogram" aria-hidden="true">S<span>&amp;</span>T</span>
+      <h1 id="admin-lock-title" class="admin-lock__title">Admin</h1>
+      <p class="admin-lock__sub">Enter the passphrase to continue.</p>
+      <form id="admin-lock-form" autocomplete="off">
+        <label for="admin-lock-input" class="visually-hidden">Passphrase</label>
+        <input
+          id="admin-lock-input"
+          type="password"
+          class="input"
+          placeholder="Passphrase"
+          autocomplete="off"
+          autocapitalize="off"
+          autocorrect="off"
+          spellcheck="false"
+          required>
+        <button type="submit" class="btn btn--block" style="margin-top:var(--sp-4)">Unlock</button>
+        <p id="admin-lock-error" class="field__error" role="alert" aria-live="polite" hidden style="margin-top:var(--sp-3); text-align:center">Try again</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- DASHBOARD (revealed after unlock) -->
+  <div id="admin-dashboard" hidden>
+
+    <header class="admin-header">
+      <div class="admin-header__inner">
+        <div class="admin-header__brand">
+          <span class="admin-header__monogram" aria-hidden="true">S<span>&amp;</span>T</span>
+          <span class="admin-header__label">Admin</span>
+        </div>
+        <div class="admin-header__meta">
+          <span class="admin-header__refresh">Last refreshed: <span id="admin-refreshed-at">&mdash;</span></span>
+          <button type="button" id="admin-refresh-btn" class="btn btn--sm btn--outline">Refresh</button>
+          <button type="button" id="admin-lock-btn" class="btn btn--sm btn--ghost">Lock</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <div class="admin-container">
+
+        <!-- TOTALS STRIP -->
+        <section aria-labelledby="totals-title" class="admin-section">
+          <h2 id="totals-title" class="admin-section__title">RSVP totals</h2>
+          <div id="admin-totals" class="admin-totals">
+            <!-- populated by admin.js -->
+          </div>
+        </section>
+
+        <!-- DIETARY STRIP -->
+        <section aria-labelledby="diet-title" class="admin-section">
+          <h2 id="diet-title" class="admin-section__title">Dietary breakdown</h2>
+          <div id="admin-dietary" class="admin-dietary">
+            <!-- populated by admin.js -->
+          </div>
+        </section>
+
+        <!-- TOOLBAR -->
+        <section aria-label="Filters and actions" class="admin-section admin-toolbar">
+          <div class="admin-toolbar__filters">
+            <label class="admin-field">
+              <span class="admin-field__label">Category</span>
+              <select id="filter-category" class="select">
+                <option value="">All categories</option>
+              </select>
+            </label>
+            <label class="admin-field">
+              <span class="admin-field__label">Status</span>
+              <select id="filter-status" class="select">
+                <option value="">All statuses</option>
+                <option value="all-yes">Fully responded (Yes)</option>
+                <option value="any-yes">Any Yes</option>
+                <option value="any-pending">Any Pending</option>
+                <option value="all-pending">Fully pending</option>
+                <option value="any-no">Any No</option>
+                <option value="any-maybe">Any Maybe</option>
+              </select>
+            </label>
+            <label class="admin-field admin-field--grow">
+              <span class="admin-field__label">Search</span>
+              <input type="search" id="filter-search" class="input" placeholder="Party or guest name, invite code...">
+            </label>
+          </div>
+          <div class="admin-toolbar__actions">
+            <button type="button" id="export-csv-btn" class="btn btn--sm">Export CSV</button>
+            <button type="button" id="export-chase-btn" class="btn btn--sm btn--outline">Export WhatsApp chase-list</button>
+            <a href="./import.html" target="_blank" rel="noopener" class="btn btn--sm btn--ghost">Import RSVP &nearr;</a>
+          </div>
+        </section>
+
+        <!-- PARTIES TABLE -->
+        <section aria-labelledby="parties-title" class="admin-section">
+          <h2 id="parties-title" class="admin-section__title">Parties</h2>
+          <div class="admin-table-wrap">
+            <table class="admin-table" id="admin-table">
+              <thead>
+                <tr>
+                  <th scope="col">Party</th>
+                  <th scope="col">Cat</th>
+                  <th scope="col">Code</th>
+                  <th scope="col">Mehendi</th>
+                  <th scope="col">Nalangu</th>
+                  <th scope="col">Ceremony</th>
+                  <th scope="col">Last update</th>
+                </tr>
+              </thead>
+              <tbody id="admin-table-body">
+                <!-- populated by admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- DRAWER -->
+    <aside id="admin-drawer" class="admin-drawer" aria-hidden="true" aria-labelledby="admin-drawer-title">
+      <div class="admin-drawer__head">
+        <h2 id="admin-drawer-title" class="admin-drawer__title">Party</h2>
+        <button type="button" id="admin-drawer-close" class="btn btn--sm btn--ghost" aria-label="Close drawer">Close</button>
+      </div>
+      <div id="admin-drawer-body" class="admin-drawer__body">
+        <!-- populated by admin.js -->
+      </div>
+    </aside>
+    <div id="admin-drawer-scrim" class="admin-drawer-scrim" hidden></div>
+
+    <!-- TOAST -->
+    <div id="admin-toast" class="admin-toast" role="status" aria-live="polite" hidden></div>
+
+  </div>
+
+  <script type="module" src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+# Email templates — out of scope for v1
+
+We deliberately are not sending email invitations for this wedding. Our guest base is South African Indian and reachable via WhatsApp; the personalised invite link in `whatsapp-templates/02-formal-invitation.md` is the official invitation, and the website is the authoritative source for all event detail. If a small number of guests later need an email version, do a manual mail-merge from the `Parties` tab of the RSVP Google Sheet — the same merge fields (`{{guest_name}}`, `{{invite_link}}`, `{{events_invited_list}}`) map straight across from the WhatsApp templates. This folder is reserved in case that need arises post-launch.

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#8B1538">
+  <meta name="description" content="Shivanie &amp; Theo&rsquo;s wedding — 17–19 December 2026, Durban &amp; KZN North Coast.">
+
+  <meta property="og:title" content="Shivanie &amp; Theo — 19 December 2026">
+  <meta property="og:description" content="A three-day Tamil celebration in Durban and the KZN North Coast.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_ZA">
+
+  <title>Shivanie &amp; Theo — 19 December 2026</title>
+
+  <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Lato:wght@300;400;700&amp;family=Noto+Sans+Tamil:wght@400;500;700&amp;display=swap">
+
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/motifs.css">
+  <link rel="stylesheet" href="css/views.css">
+  <link rel="stylesheet" href="css/print.css" media="print">
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header" data-role="header">
+    <div class="container site-header__inner">
+      <a href="#/" class="site-header__brand" aria-label="Shivanie and Theo — home">
+        <span class="site-header__monogram" aria-hidden="true">S<span class="site-header__amp">&amp;</span>T</span>
+      </a>
+      <button class="site-header__nav-toggle" type="button" aria-controls="primary-nav" aria-expanded="false">
+        <span class="visually-hidden">Menu</span>
+        <span class="site-header__nav-toggle-bar" aria-hidden="true"></span>
+        <span class="site-header__nav-toggle-bar" aria-hidden="true"></span>
+        <span class="site-header__nav-toggle-bar" aria-hidden="true"></span>
+      </button>
+      <nav class="site-nav" id="primary-nav" aria-label="Primary">
+        <ul class="site-nav__list">
+          <li><a href="#/" data-route="/">Home</a></li>
+          <li><a href="#/story" data-route="/story">Our Story</a></li>
+          <li><a href="#/celebration" data-route="/celebration">Celebration</a></li>
+          <li><a href="#/culture" data-route="/culture">Culture</a></li>
+          <li><a href="#/travel" data-route="/travel">Travel</a></li>
+          <li><a href="#/faq" data-route="/faq">FAQ</a></li>
+          <li><a href="#/rsvp" class="btn btn--gold btn--sm" data-route="/rsvp">RSVP</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div id="welcome-banner" class="welcome-banner" hidden>
+    <div class="container welcome-banner__inner">
+      <span class="welcome-banner__greeting">Vanakkam,</span>
+      <strong class="welcome-banner__name" data-bind="party_name">friend</strong>
+      <a href="#/rsvp" class="welcome-banner__cta">Open your invitation &rsaquo;</a>
+    </div>
+  </div>
+
+  <main id="main" class="site-main" data-role="main" tabindex="-1">
+    <div id="view" class="view" aria-live="polite"></div>
+  </main>
+
+  <footer class="site-footer" data-role="footer">
+    <div class="container site-footer__inner">
+      <div class="site-footer__brand">
+        <span class="site-footer__monogram" aria-hidden="true">S<span>&amp;</span>T</span>
+        <p class="site-footer__tagline">Made with love &mdash; <span lang="ta">அன்புடன்</span></p>
+      </div>
+      <div class="site-footer__meta">
+        <p>#ShivanieAndTheo2026</p>
+        <p><small>Saturday, 19 December 2026 &middot; Durban, South Africa</small></p>
+      </div>
+    </div>
+  </footer>
+
+  <template id="tpl-event-card">
+    <article class="event-card">
+      <div class="event-card__motif" aria-hidden="true"></div>
+      <p class="event-card__day"></p>
+      <h3 class="event-card__title"></h3>
+      <p class="event-card__date"></p>
+      <p class="event-card__venue"></p>
+      <p class="event-card__blurb"></p>
+      <a class="event-card__link" href="#">Read more &rsaquo;</a>
+    </article>
+  </template>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

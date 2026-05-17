@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Preview Invite Link — Shivanie &amp; Theo</title>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    .tool-wrap { max-width: 44rem; margin: 0 auto; padding: var(--sp-7) var(--sp-5); }
+    .tool-header { text-align: center; margin-bottom: var(--sp-6); }
+    .tool-header h1 { font-family: var(--ff-serif); color: var(--c-red); margin: 0 0 var(--sp-2); }
+    .tool-header p { margin: 0; color: var(--c-ink-soft); }
+    .field { display: flex; flex-direction: column; gap: var(--sp-2); margin-bottom: var(--sp-5); }
+    .field__label {
+      font-family: var(--ff-sans); font-size: var(--fs-200); font-weight: 700;
+      letter-spacing: var(--ls-wide); text-transform: uppercase; color: var(--c-ink-soft);
+    }
+    .input {
+      font-family: ui-monospace, "Menlo", "Consolas", monospace;
+      font-size: var(--fs-400);
+      width: 100%;
+      padding: var(--sp-3) var(--sp-4);
+      background: var(--c-cream-soft);
+      border: 1.5px solid var(--c-line);
+      border-radius: var(--r-md);
+      color: var(--c-ink);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      box-sizing: border-box;
+      min-height: 44px;
+    }
+    .actions { display: flex; gap: var(--sp-3); flex-wrap: wrap; margin: var(--sp-5) 0; }
+    .result {
+      background: var(--c-cream-soft);
+      border-left: 4px solid var(--c-gold);
+      padding: var(--sp-4) var(--sp-5);
+      border-radius: 0 var(--r-md) var(--r-md) 0;
+      margin-top: var(--sp-5);
+    }
+    .result h3 { margin: 0 0 var(--sp-2); color: var(--c-red); font-family: var(--ff-serif); }
+    .result dl { display: grid; grid-template-columns: 9rem 1fr; gap: var(--sp-2) var(--sp-4); margin: 0; }
+    .result dt { font-weight: 700; color: var(--c-ink-soft); }
+    .result dd { margin: 0; }
+    .result--miss { border-left-color: var(--c-error); background: #F3D2D2; }
+    .result--miss h3 { color: var(--c-error); }
+  </style>
+</head>
+<body>
+  <div class="tool-wrap">
+    <header class="tool-header">
+      <h1>Preview Invite Link</h1>
+      <p>Paste an invite code to test it before sending. We&rsquo;ll look up the matched party and let you open the live link.</p>
+    </header>
+
+    <div class="field">
+      <label class="field__label" for="code">Invite code (6 characters)</label>
+      <input id="code" class="input" placeholder="K7M2QH" maxlength="6" autocapitalize="characters" autocomplete="off" spellcheck="false">
+    </div>
+
+    <div class="actions">
+      <button type="button" id="preview-btn" class="btn">Preview &amp; open</button>
+      <button type="button" id="lookup-btn" class="btn btn--outline">Lookup only</button>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <script type="module">
+    const CROCKFORD = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+
+    function isPlausible(code) {
+      const c = String(code || '').toUpperCase().trim();
+      return c.length === 6 && [...c].every(ch => CROCKFORD.includes(ch));
+    }
+
+    function escHtml(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    let _guests = null;
+    async function loadGuests() {
+      if (_guests) return _guests;
+      const res = await fetch('../data/guests.json', { cache: 'no-cache' });
+      if (!res.ok) throw new Error('Could not load guests.json');
+      _guests = await res.json();
+      return _guests;
+    }
+
+    async function lookup() {
+      const raw = document.getElementById('code').value;
+      const code = String(raw || '').toUpperCase().trim();
+      const result = document.getElementById('result');
+      if (!isPlausible(code)) {
+        result.innerHTML = `<div class="result result--miss"><h3>Not a plausible code</h3><p>Codes must be 6 Crockford base-32 characters (no I, L, O, U).</p></div>`;
+        return null;
+      }
+      try {
+        const data = await loadGuests();
+        const party = (data.parties || []).find(p => p.invite_code === code);
+        if (!party) {
+          result.innerHTML = `
+            <div class="result result--miss">
+              <h3>No match found in guests.json</h3>
+              <p>The code <strong>${escHtml(code)}</strong> is well-formed, but no party has it. You can still preview the link &mdash; it will land on the not-invited page.</p>
+            </div>`;
+          return code;
+        }
+        result.innerHTML = `
+          <div class="result">
+            <h3>${escHtml(party.party_name)}</h3>
+            <dl>
+              <dt>Invite code</dt><dd><code>${escHtml(party.invite_code)}</code></dd>
+              <dt>Category</dt><dd>${escHtml(party.category || '—')}</dd>
+              <dt>Primary contact</dt><dd>${escHtml(party.primary_contact?.name || '—')} ${party.primary_contact?.whatsapp ? `<small>(${escHtml(party.primary_contact.whatsapp)})</small>` : ''}</dd>
+              <dt>Events invited</dt><dd>${escHtml((party.events_invited || []).join(', '))}</dd>
+              <dt>Members</dt><dd>${escHtml((party.members || []).map(m => m.name).join(', '))}</dd>
+              <dt>Plus-ones</dt><dd>${party.plus_ones_allowed || 0}</dd>
+              <dt>Accessibility</dt><dd>${party.accessibility?.wheelchair ? 'Wheelchair access needed' : 'None noted'}</dd>
+            </dl>
+          </div>`;
+        return code;
+      } catch (e) {
+        result.innerHTML = `<div class="result result--miss"><h3>Lookup failed</h3><p>${escHtml(e.message)}</p></div>`;
+        return null;
+      }
+    }
+
+    async function preview() {
+      const code = await lookup();
+      if (!code) return;
+      // Open the live SPA in a new tab
+      const url = `../?i=${encodeURIComponent(code)}#/rsvp`;
+      window.open(url, '_blank', 'noopener');
+    }
+
+    document.getElementById('preview-btn').addEventListener('click', preview);
+    document.getElementById('lookup-btn').addEventListener('click', lookup);
+    document.getElementById('code').addEventListener('keydown', e => {
+      if (e.key === 'Enter') preview();
+    });
+  </script>
+</body>
+</html>

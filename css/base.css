@@ -1,0 +1,131 @@
+/* Reset + base typography */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -moz-tab-size: 4;
+  tab-size: 4;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--ff-sans);
+  font-size: var(--fs-300);
+  line-height: var(--lh-base);
+  color: var(--c-ink);
+  background: var(--c-cream);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main { flex: 1; }
+
+img, svg, video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button { cursor: pointer; }
+
+a {
+  color: var(--c-red);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--c-gold-dark);
+  transition: color var(--t-fast) var(--ease-out);
+}
+a:hover { color: var(--c-red-dark); text-decoration-color: var(--c-red); }
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--ff-serif);
+  font-weight: 500;
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-tight);
+  margin: 0 0 var(--sp-4);
+  color: var(--c-ink);
+}
+h1 { font-size: var(--fs-800); }
+h2 { font-size: var(--fs-700); }
+h3 { font-size: var(--fs-600); }
+h4 { font-size: var(--fs-500); }
+h5 { font-size: var(--fs-400); }
+
+p { margin: 0 0 var(--sp-4); }
+p:last-child { margin-bottom: 0; }
+
+ul, ol { padding-left: 1.4em; margin: 0 0 var(--sp-4); }
+li { margin-bottom: var(--sp-2); }
+
+em, i { font-style: italic; }
+strong, b { font-weight: 700; }
+
+small { font-size: var(--fs-200); color: var(--c-ink-soft); }
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--c-line);
+  margin: var(--sp-7) 0;
+}
+
+blockquote {
+  margin: var(--sp-5) 0;
+  padding: var(--sp-4) var(--sp-5);
+  border-left: 3px solid var(--c-gold);
+  font-style: italic;
+  color: var(--c-ink-soft);
+  background: var(--c-cream-soft);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+}
+
+[lang="ta"] {
+  font-family: var(--ff-tamil);
+  font-feature-settings: "kern";
+}
+
+/* Focus — gold ring on cream is decorative but ALSO meets a11y because it pairs with an outline-offset that gives clear contrast against the background colour */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--c-gold-dark);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+
+/* Visually hidden utility */
+.visually-hidden, .sr-only {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: var(--sp-4);
+  background: var(--c-ink);
+  color: var(--c-cream);
+  padding: var(--sp-2) var(--sp-4);
+  border-radius: var(--r-md);
+  text-decoration: none;
+  z-index: 100;
+}
+.skip-link:focus { top: var(--sp-4); }
+
+/* Selection */
+::selection { background: var(--c-gold); color: var(--c-ink); }

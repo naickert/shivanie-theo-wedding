@@ -1,0 +1,80 @@
+/* Decorative motifs: gold borders, kolam frames, dividers */
+
+/* Gold zari divider — used between sections */
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-4);
+  margin: var(--sp-7) auto;
+  max-width: 320px;
+  color: var(--c-gold-dark);
+  font-size: var(--fs-500);
+}
+.divider::before, .divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--c-gold-dark) 50%, transparent 100%);
+}
+.divider__motif {
+  display: inline-block;
+  font-style: normal;
+  line-height: 1;
+}
+
+/* Section motif strip (image-based) */
+.motif-strip {
+  height: 40px;
+  width: 100%;
+  background: url('../assets/motifs/gold-divider.svg') no-repeat center / contain;
+  margin: var(--sp-6) auto;
+  opacity: 0.8;
+}
+
+/* Corner ornament frame (decorative SVG corners on cards/heroes) */
+.ornate-frame {
+  position: relative;
+  padding: var(--sp-7);
+}
+.ornate-frame::before,
+.ornate-frame::after {
+  content: "";
+  position: absolute;
+  width: 56px; height: 56px;
+  background: url('../assets/motifs/kolam-corner.svg') no-repeat center / contain;
+  opacity: 0.6;
+  pointer-events: none;
+}
+.ornate-frame::before { top: 0; left: 0; }
+.ornate-frame::after  { bottom: 0; right: 0; transform: rotate(180deg); }
+.ornate-frame > .ornate-frame__corners::before,
+.ornate-frame > .ornate-frame__corners::after {
+  content: "";
+  position: absolute;
+  width: 56px; height: 56px;
+  background: url('../assets/motifs/kolam-corner.svg') no-repeat center / contain;
+  opacity: 0.6;
+  pointer-events: none;
+}
+.ornate-frame > .ornate-frame__corners::before { top: 0; right: 0; transform: rotate(90deg); }
+.ornate-frame > .ornate-frame__corners::after  { bottom: 0; left: 0; transform: rotate(-90deg); }
+
+/* Peacock feather watermark (large decorative element) */
+.feather-wm {
+  position: absolute;
+  width: 240px;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Tamil ornament between names */
+.name-ornament {
+  display: inline-block;
+  color: var(--c-gold-dark);
+  font-family: var(--ff-serif);
+  font-style: italic;
+  margin: 0 0.3em;
+  vertical-align: middle;
+}

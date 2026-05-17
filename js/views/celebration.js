@@ -1,0 +1,80 @@
+/* Celebration view — three-day overview */
+
+import { get as getState } from '../state.js';
+
+export async function render(root) {
+  const { party } = getState();
+
+  root.innerHTML = `
+    <section class="section">
+      <div class="container">
+        <header class="page-header">
+          <span class="page-header__eyebrow">Three Days. Three Venues. One Family.</span>
+          <h1 class="page-header__title">The Celebration</h1>
+          <p class="page-header__lead">A Tamil wedding is not a single afternoon &mdash; it is a slow gathering of family across several days, each with its own rituals, its own dress code, and its own kind of joy. Here is the shape of ours.</p>
+        </header>
+
+        <div class="grid grid--3" style="margin-top:var(--sp-7)">
+          ${eventCard({
+            day: 'Day 1 — Thursday',
+            title: 'Mehendi',
+            ta: 'மருதாணி',
+            date: '17 December 2026',
+            venue: "Bride's home, Durban",
+            blurb: 'An intimate, female-centred afternoon of song, sweets and the slow art of <em>mehendi</em> (henna) being drawn across the bride&rsquo;s hands and feet. The deeper the colour, the longer the love &mdash; or so the aunties insist.',
+            href: '#/events/mehendi',
+            invited: invitedTo(party, 'mehendi')
+          })}
+          ${eventCard({
+            day: 'Day 2 — Friday',
+            title: 'Nalangu &amp; Sangeeth',
+            ta: 'நலங்கு',
+            date: '18 December 2026',
+            venue: 'Kendra Hall, Greyville',
+            blurb: 'First, <em>nalangu</em> (family games) &mdash; rolling coconuts, hiding rings in turmeric water, two families teasing each other into one. Then <em>sangeeth</em> &mdash; choreography, surprise performances and a dance floor that doesn&rsquo;t close until very late.',
+            href: '#/events/nalangu',
+            invited: invitedTo(party, 'nalangu')
+          })}
+          ${eventCard({
+            day: 'Day 3 — Saturday',
+            title: 'Wedding &amp; Reception',
+            ta: 'திருமணம்',
+            date: '19 December 2026',
+            venue: 'Maroupi, Umhlali',
+            blurb: 'The wedding itself &mdash; a one-hour Tamil ceremony beneath a flower-laden <em>mandap</em> (sacred canopy) in the Maroupi gardens, with the <em>muhurtham</em> (auspicious moment) at 15:15. Followed by a vegetarian feast and dancing indoors.',
+            href: '#/events/ceremony',
+            invited: invitedTo(party, 'ceremony')
+          })}
+        </div>
+
+        <div class="motif-strip" aria-hidden="true" style="margin:var(--sp-8) 0"></div>
+
+        <div class="container container--text center-text">
+          <p>Not sure which days you&rsquo;re invited to? Open your personalised invitation link &mdash; the events you&rsquo;re invited to will be marked.</p>
+          <p style="margin-top:var(--sp-5)">
+            <a href="#/rsvp" class="btn">${party ? 'Open Your Invitation' : 'RSVP'}</a>
+            <a href="#/culture" class="btn btn--outline" style="margin-left:var(--sp-3)">Cultural Guide</a>
+          </p>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function eventCard({ day, title, ta, date, venue, blurb, href, invited }) {
+  return `
+    <article class="event-card">
+      <div class="event-card__motif" aria-hidden="true"></div>
+      <p class="event-card__day">${day} ${invited === true ? '<span class="badge badge--invited" style="margin-left:.5em">You&rsquo;re invited</span>' : ''}</p>
+      <h3 class="event-card__title">${title} <span lang="ta" style="font-size:.7em;color:var(--c-gold-dark);font-weight:400">${ta}</span></h3>
+      <p class="event-card__date">${date}</p>
+      <p class="event-card__venue">${venue}</p>
+      <p class="event-card__blurb">${blurb}</p>
+      <a class="event-card__link" href="${href}">Read more &rsaquo;</a>
+    </article>`;
+}
+
+function invitedTo(party, eventId) {
+  if (!party) return null;
+  return Array.isArray(party.events_invited) && party.events_invited.includes(eventId);
+}

@@ -1,0 +1,18 @@
+# Dependencies (only used for local Playwright testing)
+node_modules/
+package.json
+package-lock.json
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# Local server output
+*.log
+
+# Local-only test artefacts
+tools/verify-admin.mjs

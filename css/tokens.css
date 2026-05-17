@@ -1,0 +1,100 @@
+/* Design tokens — Shivanie & Theo wedding website
+   Traditional Tamil temple-inspired palette.
+   Gold is decorative only (fails contrast on cream); body text is charcoal on cream. */
+
+:root {
+  /* ---- Brand colour ---- */
+  --c-red:           #8B1538;   /* Kanjivaram deep red — primary brand */
+  --c-red-dark:      #6B0F2A;
+  --c-red-light:     #B83A5C;
+  --c-gold:          #D4AF37;   /* Zari gold — DECORATIVE ONLY */
+  --c-gold-dark:     #9E821C;
+  --c-gold-light:    #E6C765;
+  --c-cream:         #F5E6D3;   /* Silk cream — page background */
+  --c-cream-soft:    #FAF1E1;   /* Cards / panels */
+  --c-cream-warm:    #EFDDC4;   /* Subtle alt */
+  --c-peacock:       #1B4965;   /* Peacock blue — accent links, secondary CTAs */
+  --c-peacock-dark:  #11324A;
+  --c-forest:        #2D5016;   /* Mango leaf green — sparingly */
+  --c-saffron:       #F4A460;   /* Saffron — highlight only */
+
+  /* ---- Functional colour ---- */
+  --c-ink:           #1A1A1A;   /* Body text */
+  --c-ink-soft:      #4A4A4A;   /* Secondary text */
+  --c-ink-muted:     #767676;   /* Tertiary, captions */
+  --c-line:          #C9B89A;   /* Subtle dividers on cream */
+  --c-line-strong:   #8C7853;   /* Stronger dividers */
+  --c-error:         #A12A2A;
+  --c-success:       #2D5016;
+  --c-focus:         var(--c-gold-dark);  /* High contrast on cream */
+
+  /* ---- Typography ---- */
+  --ff-serif:        "Playfair Display", "Garamond", "Georgia", serif;
+  --ff-sans:         "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --ff-tamil:        "Noto Sans Tamil", "Nirmala UI", "Latha", "Lato", sans-serif;
+
+  --fs-100: 0.75rem;    /* 12 */
+  --fs-200: 0.875rem;   /* 14 */
+  --fs-300: 1rem;       /* 16 — body default */
+  --fs-400: 1.125rem;   /* 18 */
+  --fs-500: 1.375rem;   /* 22 */
+  --fs-600: 1.75rem;    /* 28 */
+  --fs-700: 2.25rem;    /* 36 */
+  --fs-800: 3rem;       /* 48 */
+  --fs-900: 4.25rem;    /* 68 */
+  --fs-hero: clamp(2.75rem, 7vw + 1rem, 5.5rem);
+
+  --lh-tight:  1.1;
+  --lh-snug:   1.25;
+  --lh-base:   1.55;
+  --lh-loose:  1.75;
+
+  --ls-tight:  -0.02em;
+  --ls-base:   0;
+  --ls-wide:   0.08em;
+  --ls-wider:  0.18em;
+
+  /* ---- Spacing scale (8pt) ---- */
+  --sp-0:  0;
+  --sp-1:  0.25rem;
+  --sp-2:  0.5rem;
+  --sp-3:  0.75rem;
+  --sp-4:  1rem;
+  --sp-5:  1.5rem;
+  --sp-6:  2rem;
+  --sp-7:  3rem;
+  --sp-8:  4rem;
+  --sp-9:  6rem;
+  --sp-10: 8rem;
+
+  /* ---- Radii ---- */
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-lg: 16px;
+  --r-pill: 999px;
+
+  /* ---- Shadows (soft, never harsh on cream) ---- */
+  --sh-1: 0 1px 2px rgba(74, 50, 26, 0.06), 0 1px 1px rgba(74, 50, 26, 0.04);
+  --sh-2: 0 4px 12px rgba(74, 50, 26, 0.08), 0 2px 4px rgba(74, 50, 26, 0.04);
+  --sh-3: 0 12px 32px rgba(74, 50, 26, 0.12), 0 4px 8px rgba(74, 50, 26, 0.06);
+
+  /* ---- Layout ---- */
+  --container-max: 72rem;
+  --container-narrow: 44rem;
+  --container-text:  38rem;
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-fast: 120ms;
+  --t-med: 240ms;
+  --t-slow: 480ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

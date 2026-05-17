@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Invite Code Generator — Shivanie &amp; Theo</title>
+  <link rel="stylesheet" href="../css/tokens.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <style>
+    .tool-wrap {
+      max-width: 64rem;
+      margin: 0 auto;
+      padding: var(--sp-7) var(--sp-5);
+    }
+    .tool-header {
+      text-align: center;
+      margin-bottom: var(--sp-6);
+      padding-bottom: var(--sp-5);
+      border-bottom: 1px solid var(--c-line);
+    }
+    .tool-header h1 {
+      font-family: var(--ff-serif);
+      color: var(--c-red);
+      margin: 0 0 var(--sp-2);
+    }
+    .tool-header p { margin: 0; color: var(--c-ink-soft); }
+
+    .field { display: flex; flex-direction: column; gap: var(--sp-2); margin-bottom: var(--sp-5); }
+    .field__label {
+      font-family: var(--ff-sans);
+      font-size: var(--fs-200);
+      font-weight: 700;
+      letter-spacing: var(--ls-wide);
+      text-transform: uppercase;
+      color: var(--c-ink-soft);
+    }
+    .textarea {
+      font-family: var(--ff-sans);
+      font-size: var(--fs-300);
+      width: 100%;
+      padding: var(--sp-3) var(--sp-4);
+      background: var(--c-cream-soft);
+      border: 1.5px solid var(--c-line);
+      border-radius: var(--r-md);
+      color: var(--c-ink);
+      min-height: 180px;
+      resize: vertical;
+      box-sizing: border-box;
+    }
+
+    .tool-actions { display: flex; gap: var(--sp-3); flex-wrap: wrap; margin: var(--sp-5) 0; }
+
+    table.codes {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: var(--sp-5);
+      font-size: var(--fs-200);
+      background: var(--c-cream-soft);
+      border-radius: var(--r-md);
+      overflow: hidden;
+    }
+    table.codes thead {
+      background: var(--c-red);
+      color: var(--c-cream);
+    }
+    table.codes th {
+      text-align: left;
+      padding: var(--sp-3);
+      font-family: var(--ff-sans);
+      letter-spacing: var(--ls-wide);
+      text-transform: uppercase;
+      font-size: var(--fs-100);
+      border-bottom: 2px solid var(--c-gold-dark);
+    }
+    table.codes td {
+      padding: var(--sp-3);
+      border-bottom: 1px solid var(--c-line);
+      vertical-align: top;
+    }
+    table.codes tr:last-child td { border-bottom: 0; }
+    table.codes .code {
+      font-family: ui-monospace, "Menlo", "Consolas", monospace;
+      font-weight: 700;
+      color: var(--c-red);
+      font-size: var(--fs-300);
+      letter-spacing: 0.05em;
+    }
+    table.codes .link {
+      font-family: ui-monospace, "Menlo", "Consolas", monospace;
+      font-size: var(--fs-100);
+      color: var(--c-peacock);
+      word-break: break-all;
+    }
+    table.codes a { color: inherit; }
+
+    .feedback {
+      display: inline-block;
+      margin-left: var(--sp-3);
+      font-size: var(--fs-200);
+      color: var(--c-forest);
+      font-weight: 700;
+    }
+    .footer-note {
+      margin-top: var(--sp-7);
+      padding-top: var(--sp-5);
+      border-top: 1px dashed var(--c-line);
+      color: var(--c-ink-muted);
+      font-size: var(--fs-200);
+    }
+  </style>
+</head>
+<body>
+  <div class="tool-wrap">
+    <header class="tool-header">
+      <h1>Invite Code Generator</h1>
+      <p>Paste party names &mdash; one per line &mdash; and we&rsquo;ll generate Crockford-base32 invite codes and shareable links.</p>
+    </header>
+
+    <div class="field">
+      <label class="field__label" for="party-names">Party names (one per line)</label>
+      <textarea id="party-names" class="textarea" placeholder="The Naidoo Family&#10;Priya Reddy&#10;The Farm Crew"></textarea>
+    </div>
+
+    <div class="field">
+      <label class="field__label" for="base-url">Base URL</label>
+      <input id="base-url" class="textarea" style="min-height:44px" value="https://shivanieandtheo.co.za/">
+    </div>
+
+    <div class="tool-actions">
+      <button type="button" id="generate-btn" class="btn">Generate codes</button>
+      <button type="button" id="copy-csv-btn" class="btn btn--outline">Copy as CSV</button>
+      <button type="button" id="download-csv-btn" class="btn btn--gold">Download CSV</button>
+      <span id="feedback" class="feedback" aria-live="polite"></span>
+    </div>
+
+    <div id="results"></div>
+
+    <div class="footer-note">
+      <p>
+        Codes use the <a href="https://www.crockford.com/base32.html" target="_blank" rel="noopener">Crockford base-32</a>
+        alphabet (32 characters, no I L O U). Each code is 5 random characters plus a mod-37 check character &mdash;
+        kept consistent with <code>js/guests.js#checkCharFor</code> so the website&rsquo;s validation accepts them.
+        Randomness comes from <code>crypto.getRandomValues</code>.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    // Crockford alphabet — must stay in sync with /js/guests.js
+    const CROCKFORD = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+    const CHECK_SYM = '0123456789ABCDEFGHJKMNPQRSTVWXYZ*~$=U'; // 37 symbols
+
+    function checkCharFor(prefix5) {
+      let sum = 0;
+      for (const ch of prefix5) {
+        const idx = CROCKFORD.indexOf(ch);
+        sum = (sum * 32 + idx) % 37;
+      }
+      return CHECK_SYM[sum];
+    }
+
+    function generateCode() {
+      let prefix = '';
+      const buf = new Uint8Array(5);
+      crypto.getRandomValues(buf);
+      for (const b of buf) prefix += CROCKFORD[b % 32];
+      return prefix + checkCharFor(prefix);
+    }
+
+    // Quick uniqueness guard (re-rolls if collision)
+    function generateUniqueCode(existing) {
+      let tries = 0;
+      while (tries < 50) {
+        const c = generateCode();
+        if (!existing.has(c)) return c;
+        tries++;
+      }
+      return generateCode(); // give up after 50 — collision odds are astronomically low
+    }
+
+    let rows = [];
+
+    function escapeHtml(s) {
+      return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    }
+
+    function renderResults() {
+      const root = document.getElementById('results');
+      if (!rows.length) { root.innerHTML = ''; return; }
+      root.innerHTML = `
+        <table class="codes">
+          <thead>
+            <tr>
+              <th style="width:32%">Party Name</th>
+              <th style="width:14%">Invite Code</th>
+              <th>Full Link</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(r => `
+              <tr>
+                <td>${escapeHtml(r.party_name)}</td>
+                <td><span class="code">${escapeHtml(r.invite_code)}</span></td>
+                <td><a class="link" href="${escapeHtml(r.full_link)}" target="_blank" rel="noopener">${escapeHtml(r.full_link)}</a></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>`;
+    }
+
+    function generate() {
+      const raw = document.getElementById('party-names').value || '';
+      const baseRaw = document.getElementById('base-url').value || '/';
+      const base = baseRaw.endsWith('/') ? baseRaw : baseRaw + '/';
+      const names = raw.split('\n').map(s => s.trim()).filter(Boolean);
+      if (!names.length) {
+        flash('Please enter at least one party name', true);
+        return;
+      }
+      const seen = new Set();
+      rows = names.map(name => {
+        const code = generateUniqueCode(seen);
+        seen.add(code);
+        return {
+          party_name: name,
+          invite_code: code,
+          full_link: `${base}?i=${code}`
+        };
+      });
+      renderResults();
+      flash(`Generated ${rows.length} code${rows.length === 1 ? '' : 's'}`);
+    }
+
+    function csvCell(v) {
+      const s = String(v == null ? '' : v);
+      return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+    }
+    function toCsv(rows) {
+      if (!rows.length) return '';
+      const headers = ['party_name', 'invite_code', 'full_link'];
+      const head = headers.join(',');
+      const body = rows.map(r => headers.map(h => csvCell(r[h])).join(',')).join('\r\n');
+      return head + '\r\n' + body + '\r\n';
+    }
+
+    async function copyCsv() {
+      if (!rows.length) { flash('Generate codes first', true); return; }
+      const csv = toCsv(rows);
+      try {
+        await navigator.clipboard.writeText(csv);
+        flash('CSV copied to clipboard');
+      } catch {
+        // Fallback
+        const ta = document.createElement('textarea');
+        ta.value = csv;
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        flash(ok ? 'CSV copied to clipboard' : 'Copy failed — select the table manually', !ok);
+      }
+    }
+
+    function downloadCsv() {
+      if (!rows.length) { flash('Generate codes first', true); return; }
+      const csv = toCsv(rows);
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const stamp = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = `theo-shivanie-invite-codes-${stamp}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+      flash('CSV downloaded');
+    }
+
+    function flash(msg, isError) {
+      const el = document.getElementById('feedback');
+      if (!el) return;
+      el.textContent = msg;
+      el.style.color = isError ? 'var(--c-error)' : 'var(--c-forest)';
+      setTimeout(() => { el.textContent = ''; }, 2500);
+    }
+
+    document.getElementById('generate-btn').addEventListener('click', generate);
+    document.getElementById('copy-csv-btn').addEventListener('click', copyCsv);
+    document.getElementById('download-csv-btn').addEventListener('click', downloadCsv);
+  </script>
+</body>
+</html>
