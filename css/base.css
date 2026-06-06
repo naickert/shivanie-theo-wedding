@@ -18,6 +18,7 @@ body {
   background: var(--c-cream);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-optical-sizing: auto;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -50,17 +51,19 @@ a:hover { color: var(--c-red-dark); text-decoration-color: var(--c-red); }
 
 h1, h2, h3, h4, h5 {
   font-family: var(--ff-serif);
-  font-weight: 500;
+  font-optical-sizing: auto;   /* Fraunces opsz: high-contrast at display, sturdier at small sizes */
   line-height: var(--lh-tight);
   letter-spacing: var(--ls-tight);
   margin: 0 0 var(--sp-4);
   color: var(--c-ink);
+  text-wrap: balance;
 }
-h1 { font-size: var(--fs-800); }
-h2 { font-size: var(--fs-700); }
-h3 { font-size: var(--fs-600); }
-h4 { font-size: var(--fs-500); }
-h5 { font-size: var(--fs-400); }
+/* Editorial hierarchy = size + WEIGHT + tracking, not size alone */
+h1 { font-size: var(--fs-800); font-weight: 600; letter-spacing: var(--ls-display); line-height: var(--lh-tight); }
+h2 { font-size: var(--fs-700); font-weight: 600; }
+h3 { font-size: var(--fs-600); font-weight: 600; }
+h4 { font-size: var(--fs-500); font-weight: 500; line-height: var(--lh-snug); }
+h5 { font-size: var(--fs-400); font-weight: 500; line-height: var(--lh-snug); }
 
 p { margin: 0 0 var(--sp-4); }
 p:last-child { margin-bottom: 0; }
@@ -92,14 +95,17 @@ blockquote {
 [lang="ta"] {
   font-family: var(--ff-tamil);
   font-feature-settings: "kern";
+  line-height: var(--lh-tamil);   /* Tamil glyphs carry tall loops — extra leading */
 }
 
-/* Focus — gold ring on cream is decorative but ALSO meets a11y because it pairs with an outline-offset that gives clear contrast against the background colour */
+/* Focus — a two-tone halo: crisp gold-dark ring (>=4.5:1 on cream) plus a soft maroon
+   outer glow that follows each element's own border-radius (pill buttons, rounded inputs,
+   inline links). On the deep-maroon band, set --c-focus: var(--c-focus-on-dark). */
 :focus { outline: none; }
 :focus-visible {
-  outline: 2px solid var(--c-gold-dark);
-  outline-offset: 3px;
-  border-radius: var(--r-sm);
+  outline: 2px solid var(--c-focus);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px rgba(126, 20, 49, 0.20);
 }
 
 /* Visually hidden utility */

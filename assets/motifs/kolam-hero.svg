@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" aria-hidden="true">
+  <!-- Large symmetric pulli kolam for the hero / gate watermark.
+       8-fold lotus woven in gold-foil around an arakku-maroon dot field, with a
+       SAFE draw-on: the line's resting state is fully drawn (stroke-dashoffset:0), so
+       if the in-image animation does not run the kolam still renders complete; when it
+       does run it traces on once. prefers-reduced-motion snaps straight to drawn. -->
+  <defs>
+    <linearGradient id="hf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E6C765"/>
+      <stop offset="0.45" stop-color="#D4AF37"/>
+      <stop offset="1" stop-color="#786012"/>
+    </linearGradient>
+    <style>
+      .ln  { fill:none; stroke:url(#hf); stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+      .ln2 { fill:none; stroke:url(#hf); stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round; opacity:.7; }
+      .ring{ fill:none; stroke:url(#hf); stroke-width:1.4; opacity:.45; }
+      .dot { fill:#7E1431; }
+      .draw{ stroke-dasharray:1; stroke-dashoffset:0; animation:kdraw 1.8s cubic-bezier(0.16,1,0.3,1); }
+      .draw.d2{ animation-delay:.3s; }
+      @keyframes kdraw { from { stroke-dashoffset:1; } to { stroke-dashoffset:0; } }
+      @media (prefers-reduced-motion: reduce) { .draw { animation:none; stroke-dashoffset:0; } }
+    </style>
+    <g id="petalA">
+      <path class="ln draw" pathLength="1" d="M200 150 C 168 120, 168 76, 200 50 C 232 76, 232 120, 200 150 Z"/>
+      <path class="ln2" d="M200 136 C 184 114, 184 86, 200 66"/>
+      <circle class="dot" cx="200" cy="44" r="3.4"/>
+    </g>
+    <g id="petalB">
+      <path class="ln2 draw d2" pathLength="1" d="M200 176 C 184 163, 184 141, 200 129 C 216 141, 216 163, 200 176 Z"/>
+      <circle class="dot" cx="200" cy="121" r="2"/>
+    </g>
+  </defs>
+
+  <!-- framing rings -->
+  <circle class="ring" cx="200" cy="200" r="188"/>
+  <circle class="ring" cx="200" cy="200" r="150" stroke-dasharray="1.5 8"/>
+
+  <!-- 8 outer lotus petals -->
+  <use href="#petalA" transform="rotate(0 200 200)"/>
+  <use href="#petalA" transform="rotate(45 200 200)"/>
+  <use href="#petalA" transform="rotate(90 200 200)"/>
+  <use href="#petalA" transform="rotate(135 200 200)"/>
+  <use href="#petalA" transform="rotate(180 200 200)"/>
+  <use href="#petalA" transform="rotate(225 200 200)"/>
+  <use href="#petalA" transform="rotate(270 200 200)"/>
+  <use href="#petalA" transform="rotate(315 200 200)"/>
+
+  <!-- 8 inner petals, offset 22.5 -->
+  <use href="#petalB" transform="rotate(22.5 200 200)"/>
+  <use href="#petalB" transform="rotate(67.5 200 200)"/>
+  <use href="#petalB" transform="rotate(112.5 200 200)"/>
+  <use href="#petalB" transform="rotate(157.5 200 200)"/>
+  <use href="#petalB" transform="rotate(202.5 200 200)"/>
+  <use href="#petalB" transform="rotate(247.5 200 200)"/>
+  <use href="#petalB" transform="rotate(292.5 200 200)"/>
+  <use href="#petalB" transform="rotate(337.5 200 200)"/>
+
+  <!-- centre rosette -->
+  <circle class="ring" cx="200" cy="200" r="22"/>
+  <circle class="dot"  cx="200" cy="200" r="6"/>
+</svg>

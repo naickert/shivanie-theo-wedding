@@ -1,39 +1,44 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 240" fill="none" stroke="#1B4965" stroke-width="0.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-  <!-- Stem -->
-  <path d="M50 240 Q48 180, 50 130 Q52 80, 50 40" stroke-width="0.7"/>
-  <!-- Outer feather body (oval) -->
-  <ellipse cx="50" cy="50" rx="34" ry="46" stroke="#D4AF37" stroke-width="0.9"/>
-  <ellipse cx="50" cy="50" rx="26" ry="38" stroke="#9E821C" stroke-width="0.7" opacity="0.8"/>
-  <!-- The "eye" — peacock signature -->
-  <ellipse cx="50" cy="50" rx="14" ry="20" fill="#1B4965" stroke="none"/>
-  <ellipse cx="50" cy="50" rx="10" ry="16" fill="#2D5016" stroke="none"/>
-  <ellipse cx="50" cy="46" rx="6"  ry="10" fill="#8B1538" stroke="none"/>
-  <ellipse cx="50" cy="44" rx="3"  ry="6"  fill="#D4AF37" stroke="none"/>
-  <circle  cx="50" cy="42" r="1.5" fill="#1A1A1A" stroke="none"/>
-  <!-- Barbs (radiating) -->
-  <g stroke="#1B4965" stroke-width="0.5" opacity="0.55">
-    <line x1="50" y1="50" x2="20"  y2="20"/>
-    <line x1="50" y1="50" x2="14"  y2="35"/>
-    <line x1="50" y1="50" x2="12"  y2="50"/>
-    <line x1="50" y1="50" x2="14"  y2="65"/>
-    <line x1="50" y1="50" x2="20"  y2="80"/>
-    <line x1="50" y1="50" x2="80"  y2="20"/>
-    <line x1="50" y1="50" x2="86"  y2="35"/>
-    <line x1="50" y1="50" x2="88"  y2="50"/>
-    <line x1="50" y1="50" x2="86"  y2="65"/>
-    <line x1="50" y1="50" x2="80"  y2="80"/>
-    <line x1="50" y1="50" x2="50"  y2="6"/>
-    <line x1="50" y1="50" x2="50"  y2="94"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 240" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <!-- Peacock feather: barbs emanate from the rachis (not a starburst), with the
+       layered eye (peacock -> mango-leaf -> arakku -> zari -> ink). Gold-foil throughout. -->
+  <defs>
+    <linearGradient id="pf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E6C765"/>
+      <stop offset="0.5" stop-color="#D4AF37"/>
+      <stop offset="1" stop-color="#786012"/>
+    </linearGradient>
+  </defs>
+  <!-- rachis / stem -->
+  <path d="M50 236 C 49 188, 51 130, 50 86" stroke="url(#pf)" stroke-width="1.2"/>
+  <!-- herl: paired barbs leaving the rachis, curving up and out -->
+  <g stroke="url(#pf)" stroke-width="0.7" opacity="0.55">
+    <path d="M50 96  C 40 92,  32 86,  27 74"/>
+    <path d="M50 96  C 60 92,  68 86,  73 74"/>
+    <path d="M50 112 C 38 110, 28 104, 22 92"/>
+    <path d="M50 112 C 62 110, 72 104, 78 92"/>
+    <path d="M50 130 C 37 130, 26 126, 19 114"/>
+    <path d="M50 130 C 63 130, 74 126, 81 114"/>
+    <path d="M50 150 C 38 152, 28 150, 21 140"/>
+    <path d="M50 150 C 62 152, 72 150, 79 140"/>
+    <path d="M50 172 C 39 175, 30 175, 24 167"/>
+    <path d="M50 172 C 61 175, 70 175, 76 167"/>
+    <path d="M50 196 C 41 200, 34 201, 29 195"/>
+    <path d="M50 196 C 59 200, 66 201, 71 195"/>
   </g>
-  <!-- Side fronds (textured filaments down stem) -->
-  <g stroke="#1B4965" stroke-width="0.4" opacity="0.4">
-    <path d="M50 110 Q 30 115, 24 130"/>
-    <path d="M50 110 Q 70 115, 76 130"/>
-    <path d="M50 140 Q 28 145, 22 162"/>
-    <path d="M50 140 Q 72 145, 78 162"/>
-    <path d="M50 170 Q 30 175, 26 190"/>
-    <path d="M50 170 Q 70 175, 74 190"/>
-    <path d="M50 200 Q 34 205, 30 218"/>
-    <path d="M50 200 Q 66 205, 70 218"/>
+  <!-- plume barbs fanning around the eye -->
+  <g stroke="url(#pf)" stroke-width="0.6" opacity="0.5">
+    <path d="M50 84 C 44 70, 40 52, 42 34"/>
+    <path d="M50 84 C 56 70, 60 52, 58 34"/>
+    <path d="M50 84 C 38 72, 30 56, 30 40"/>
+    <path d="M50 84 C 62 72, 70 56, 70 40"/>
+    <path d="M50 84 C 33 74, 22 60, 20 46"/>
+    <path d="M50 84 C 67 74, 78 60, 80 46"/>
   </g>
+  <!-- layered eye -->
+  <ellipse cx="50" cy="52" rx="20"  ry="28" stroke="url(#pf)" stroke-width="1"/>
+  <ellipse cx="50" cy="52" rx="14"  ry="20" fill="#1B4965"/>
+  <ellipse cx="50" cy="52" rx="10"  ry="15" fill="#2D5016"/>
+  <ellipse cx="50" cy="50" rx="6.5" ry="10" fill="#7E1431"/>
+  <ellipse cx="50" cy="48" rx="3.4" ry="6"  fill="url(#pf)"/>
+  <circle  cx="50" cy="46" r="1.6" fill="#1A1A1A"/>
 </svg>

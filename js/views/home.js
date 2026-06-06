@@ -23,6 +23,10 @@ export async function render(root) {
 
   root.innerHTML = `
     <section class="hero">
+      <div class="hero__watermark" aria-hidden="true"></div>
+      <div class="gopuram-arch" aria-hidden="true"></div>
+      <div class="toran" aria-hidden="true"></div>
+      <div class="feather-wm" aria-hidden="true"></div>
       <div class="container">
         <div class="hero__motif-top" aria-hidden="true"></div>
         <span class="hero__eyebrow">Save the Date &mdash; 17–19 December 2026</span>
@@ -33,7 +37,7 @@ export async function render(root) {
         </h1>
         <p class="hero__date">
           Saturday, 19 December 2026
-          <span class="hero__date-ta" lang="ta">டிசம்பர் 19, 2026 சனிக்கிழமை</span>
+          <span class="hero__date-ta" lang="ta" style="font-family:var(--ff-tamil-serif)">டிசம்பர் 19, 2026 சனிக்கிழமை</span>
         </p>
         <p class="hero__location">Durban &middot; KZN North Coast &middot; South Africa</p>
 
@@ -53,7 +57,7 @@ export async function render(root) {
       </div>
     </section>
 
-    <div class="motif-strip" aria-hidden="true"></div>
+    <div class="motif-strip motif-strip--toran" aria-hidden="true"></div>
 
     <section class="three-day">
       <div class="container">
@@ -90,7 +94,8 @@ export async function render(root) {
             venue: 'Maroupi, Umhlali',
             blurb: 'The wedding itself &mdash; a sacred one-hour Tamil ceremony beneath a flower-laden <em>mandap</em>, followed by feast and dance.',
             href: '#/events/ceremony',
-            invited: invitedTo(party, 'ceremony')
+            invited: invitedTo(party, 'ceremony'),
+            feature: true
           })}
         </div>
       </div>
@@ -98,11 +103,11 @@ export async function render(root) {
 
     <div class="divider" aria-hidden="true"><span class="divider__motif">&#10070;</span></div>
 
-    <section class="section--sm">
+    <section class="section--sm section--band">
       <div class="container container--text center-text">
         <h2>For our guests joining a Tamil wedding for the first time</h2>
         <p>Welcome &mdash; here is a gentle map to what you&rsquo;ll experience. Tamil weddings are sacred, joyful, slightly chaotic in the best way, and built on the idea that a marriage joins not just two people but two families and the generations on either side.</p>
-        <p><a href="#/culture" class="btn btn--outline">Read the Cultural Guide</a></p>
+        <p><a href="#/culture" class="btn btn--on-dark">Read the Cultural Guide</a></p>
       </div>
     </section>
   `;
@@ -111,12 +116,15 @@ export async function render(root) {
   if (cd) tickCountdown(root);
 }
 
-function eventCard({ day, title, ta, date, venue, blurb, href, invited }) {
+function eventCard({ day, title, ta, date, venue, blurb, href, invited, feature }) {
+  // Co-equal display Tamil: gold-dark is AA on cream (~4.6:1); on the maroon
+  // feature card it flips to gold-light to stay AA (~7.4:1) against --grad-band.
+  const taColor = feature ? 'var(--c-gold-light)' : 'var(--c-gold-dark)';
   return `
-    <article class="event-card">
+    <article class="event-card${feature ? ' event-card--feature' : ''}">
       <div class="event-card__motif" aria-hidden="true"></div>
       <p class="event-card__day">${day} ${invited === true ? '<span class="badge badge--invited" style="margin-left:.5em">You&rsquo;re invited</span>' : ''}</p>
-      <h3 class="event-card__title">${title} <span lang="ta" style="font-size:.7em;color:var(--c-gold-dark);font-weight:400">${ta}</span></h3>
+      <h3 class="event-card__title">${title} <span lang="ta" style="font-family:var(--ff-tamil-serif);font-size:.85em;color:${taColor}">${ta}</span></h3>
       <p class="event-card__date">${date}</p>
       <p class="event-card__venue">${venue}</p>
       <p class="event-card__blurb">${blurb}</p>

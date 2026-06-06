@@ -4,7 +4,8 @@ import { isPlausibleCode, findParty } from '../guests.js';
 
 export async function render(root) {
   root.innerHTML = `
-    <section class="hero">
+    <section class="hero hero--gate">
+      <div class="hero__watermark" aria-hidden="true"></div>
       <div class="container">
         <div class="hero__motif-top" aria-hidden="true"></div>
         <span class="hero__eyebrow">A private invitation</span>
@@ -20,7 +21,7 @@ export async function render(root) {
 
     <div class="motif-strip" aria-hidden="true"></div>
 
-    <section class="section">
+    <section class="section gate">
       <div class="container container--text">
         <div class="card card--ornate" style="text-align:center">
           <h2 style="color:var(--c-red);margin-top:0">Please use your personalised invitation link</h2>
@@ -30,7 +31,7 @@ export async function render(root) {
           </p>
           <p>If you have your invite link, please open it directly. If you have only the 6-character code, you can enter it below.</p>
 
-          <form id="code-entry" style="display:flex;gap:var(--sp-3);justify-content:center;flex-wrap:wrap;margin-top:var(--sp-5);max-width:380px;margin-left:auto;margin-right:auto">
+          <form id="code-entry" style="display:flex;gap:var(--sp-3);justify-content:center;flex-wrap:wrap;margin-top:var(--sp-5);max-width:420px;margin-left:auto;margin-right:auto">
             <label for="invite-code-input" class="visually-hidden">Invite code</label>
             <input
               id="invite-code-input"
@@ -42,10 +43,10 @@ export async function render(root) {
               autocomplete="off"
               maxlength="6"
               placeholder="e.g. K7M2QH"
-              style="text-transform:uppercase;letter-spacing:.15em;text-align:center;font-family:var(--ff-serif);max-width:200px"
+              style="text-transform:uppercase;letter-spacing:.15em;text-align:center;font-family:var(--ff-serif);flex:1 1 100%;width:100%"
               aria-describedby="code-help"
             />
-            <button type="submit" class="btn">Open invite</button>
+            <button type="submit" class="btn btn--block">Open invite</button>
           </form>
           <p id="code-help" class="field__hint" style="margin-top:var(--sp-3)">6 letters and numbers, no spaces.</p>
           <p id="code-error" class="field__error" style="margin-top:var(--sp-3);min-height:1.5em" aria-live="polite"></p>

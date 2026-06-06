@@ -1,38 +1,61 @@
-/* Decorative motifs: gold borders, kolam frames, dividers */
+/* Decorative motifs: zari dividers, kolam frames, hero ornaments.
+   Gold here is woven thread only — every shape uses the gold-foil gradient
+   (--c-gold-foil) or an SVG foil gradient, never gold as cream-side body text.
+   All animated motifs settle on a visible end-state and are collapsed by the
+   global prefers-reduced-motion block in tokens.css; explicit guards repeated below. */
 
-/* Gold zari divider — used between sections */
+/* Keep hero copy above the decorative layers (watermark / gopuram / toran sit at z-index 0). */
+.hero > .container { position: relative; z-index: 1; }
+
+/* -------- Zari divider (section break) -------- */
 .divider {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--sp-4);
   margin: var(--sp-7) auto;
-  max-width: 320px;
+  max-width: 340px;
   color: var(--c-gold-dark);
-  font-size: var(--fs-500);
 }
 .divider::before, .divider::after {
   content: "";
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent 0%, var(--c-gold-dark) 50%, transparent 100%);
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--c-gold-dark) 38%,
+    var(--c-gold) 50%,
+    var(--c-gold-dark) 62%,
+    transparent 100%);
 }
+/* lotus glyph in place of the dingbat — gold-foil shaped by a mask */
 .divider__motif {
   display: inline-block;
-  font-style: normal;
-  line-height: 1;
+  width: 30px;
+  height: 22px;
+  font-size: 0;          /* hide the literal dingbat fallback */
+  line-height: 0;
+  background: var(--c-gold-foil);
+  -webkit-mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 24"><path fill="black" d="M16 2C19.5 8 19.5 15 16 22 12.5 15 12.5 8 16 2ZM16 22C9 19 3 14 4 7 10 9 14 15 16 22ZM16 22C23 19 29 14 28 7 22 9 18 15 16 22Z"/></svg>') center / contain no-repeat;
+          mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 24"><path fill="black" d="M16 2C19.5 8 19.5 15 16 22 12.5 15 12.5 8 16 2ZM16 22C9 19 3 14 4 7 10 9 14 15 16 22ZM16 22C23 19 29 14 28 7 22 9 18 15 16 22Z"/></svg>') center / contain no-repeat;
 }
 
-/* Section motif strip (image-based) */
+/* -------- Section motif strip -------- */
 .motif-strip {
   height: 40px;
   width: 100%;
   background: url('../assets/motifs/gold-divider.svg') no-repeat center / contain;
   margin: var(--sp-6) auto;
-  opacity: 0.8;
+  opacity: 0.85;
+}
+/* Threshold garland variant — a repeating maavilai thoranam */
+.motif-strip--toran {
+  height: 54px;
+  background: url('../assets/motifs/toran.svg') repeat-x top center / auto 100%;
+  opacity: 1;
 }
 
-/* Corner ornament frame (decorative SVG corners on cards/heroes) */
+/* -------- Corner ornament frame (kolam corners) -------- */
 .ornate-frame {
   position: relative;
   padding: var(--sp-7);
@@ -43,7 +66,7 @@
   position: absolute;
   width: 56px; height: 56px;
   background: url('../assets/motifs/kolam-corner.svg') no-repeat center / contain;
-  opacity: 0.6;
+  opacity: 0.65;
   pointer-events: none;
 }
 .ornate-frame::before { top: 0; left: 0; }
@@ -54,27 +77,103 @@
   position: absolute;
   width: 56px; height: 56px;
   background: url('../assets/motifs/kolam-corner.svg') no-repeat center / contain;
-  opacity: 0.6;
+  opacity: 0.65;
   pointer-events: none;
 }
 .ornate-frame > .ornate-frame__corners::before { top: 0; right: 0; transform: rotate(90deg); }
 .ornate-frame > .ornate-frame__corners::after  { bottom: 0; left: 0; transform: rotate(-90deg); }
 
-/* Peacock feather watermark (large decorative element) */
+/* -------- Peacock feather watermark (now wired to the refined art) -------- */
 .feather-wm {
   position: absolute;
+  right: clamp(8px, 4vw, 48px);
+  bottom: 8%;
   width: 240px;
-  opacity: 0.08;
+  aspect-ratio: 100 / 240;
+  background: url('../assets/motifs/peacock-feather.svg') no-repeat center / contain;
+  opacity: 0.14;
   pointer-events: none;
   z-index: 0;
 }
 
-/* Tamil ornament between names */
+/* -------- Tamil union glyph between the names -------- */
+/* gold-foil interlocking mango paisleys via mask; the literal '&' stays as aria-hidden fallback */
 .name-ornament {
   display: inline-block;
-  color: var(--c-gold-dark);
-  font-family: var(--ff-serif);
-  font-style: italic;
-  margin: 0 0.3em;
-  vertical-align: middle;
+  width: 0.82em;
+  height: 0.68em;
+  margin: 0 0.32em;
+  vertical-align: 0.04em;
+  overflow: hidden;
+  text-indent: -9999px;
+  white-space: nowrap;
+  line-height: 1;
+  color: transparent;
+  background: var(--c-gold-foil);
+  -webkit-mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 36"><path fill="black" d="M22 5C13 5 7 12 9 22 10 28 17 30 21 26 17 24 16 19 19 16 21 14 22 13 22 5ZM22 5C31 5 37 12 35 22 34 28 27 30 23 26 27 24 28 19 25 16 23 14 22 13 22 5Z"/><circle cx="22" cy="6" r="2.4" fill="black"/></svg>') center / contain no-repeat;
+          mask: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 36"><path fill="black" d="M22 5C13 5 7 12 9 22 10 28 17 30 21 26 17 24 16 19 19 16 21 14 22 13 22 5ZM22 5C31 5 37 12 35 22 34 28 27 30 23 26 27 24 28 19 25 16 23 14 22 13 22 5Z"/><circle cx="22" cy="6" r="2.4" fill="black"/></svg>') center / contain no-repeat;
+}
+
+/* -------- Hero kolam watermark -------- */
+.hero__watermark {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: clamp(320px, 92vmin, 760px);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  background: url('../assets/motifs/kolam-hero.svg') no-repeat center / contain;
+  opacity: 0.12;
+  z-index: 0;
+  pointer-events: none;
+  animation: hero-wm-in var(--t-slower) var(--ease-out) both;
+}
+.hero--gate .hero__watermark {
+  width: clamp(360px, 104vmin, 900px);
+  opacity: 0.16;
+}
+@keyframes hero-wm-in {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  to   { opacity: 0.12; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* -------- Gopuram arch crowning the hero -------- */
+.gopuram-arch {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: clamp(420px, 96vw, 1100px);
+  aspect-ratio: 480 / 260;
+  background: url('../assets/motifs/gopuram-arch.svg') no-repeat top center / contain;
+  opacity: 0.16;
+  z-index: 0;
+  pointer-events: none;
+  animation: gopuram-in var(--t-slow) var(--ease-out) both;
+}
+@keyframes gopuram-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  to   { opacity: 0.16; transform: translateX(-50%) translateY(0); }
+}
+
+/* -------- Maavilai thoranam strung along the top edge -------- */
+.toran {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 48px;
+  background: url('../assets/motifs/toran.svg') repeat-x top center / auto 100%;
+  opacity: 0.85;
+  z-index: 0;
+  pointer-events: none;
+  animation: toran-in var(--t-slow) var(--ease-out) both;
+}
+@keyframes toran-in {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 0.85; transform: translateY(0); }
+}
+
+/* -------- Final-state guards for reduced motion (belt-and-braces alongside tokens.css) -------- */
+@media (prefers-reduced-motion: reduce) {
+  .hero__watermark        { animation: none; opacity: 0.12; transform: translate(-50%, -50%); }
+  .hero--gate .hero__watermark { opacity: 0.16; }
+  .gopuram-arch           { animation: none; opacity: 0.16; transform: translateX(-50%); }
+  .toran                  { animation: none; opacity: 0.85; transform: none; }
 }

@@ -1,10 +1,14 @@
-/* Buttons, cards, badges, forms */
+/* Buttons, cards, badges, forms — "Arakku Silk, Modern Cut."
+   Gold is woven thread only: foil borders / hairlines / sheens, never cream-side body text.
+   Legible gold text appears solely on the deep-maroon band (.event-card--feature). */
 
 /* -------- Buttons -------- */
 .btn {
   --btn-bg: var(--c-red);
   --btn-fg: var(--c-cream);
   --btn-bd: var(--c-red);
+  position: relative;
+  overflow: hidden;            /* clips the gold sheen sweep to the pill */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -21,25 +25,49 @@
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
-  transition: transform var(--t-fast) var(--ease-out), background var(--t-fast) var(--ease-out), color var(--t-fast) var(--ease-out), box-shadow var(--t-fast) var(--ease-out);
+  transition: transform var(--t-fast) var(--ease-out), background var(--t-fast) var(--ease-out), color var(--t-fast) var(--ease-out), border-color var(--t-fast) var(--ease-out), box-shadow var(--t-fast) var(--ease-out);
   box-shadow: var(--sh-1);
   min-height: 44px;
 }
 .btn:hover {
   --btn-bg: var(--c-red-dark);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: var(--sh-2);
 }
 .btn:active { transform: translateY(0); box-shadow: var(--sh-1); }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
 .btn--gold {
-  --btn-bg: var(--c-gold-dark);   /* darker variant for AA contrast on cream BG context */
+  --btn-bg: var(--c-gold-dark);   /* antique zari — cream-on-it ~4.96:1 AA on the cream side */
   --btn-fg: var(--c-cream);
   --btn-bd: var(--c-gold-dark);
 }
 .btn--gold:hover {
-  --btn-bg: #7B6516;
+  --btn-bg: var(--c-gold-darker);
+}
+/* Restrained zari sheen: a foil band sweeps across once on hover, screen-blended so it
+   reads as a glint of woven gold and leaves the cream label legible. Frozen by the
+   global prefers-reduced-motion block (duration collapses to the end frame, opacity 0). */
+.btn--gold::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 60%;
+  background: var(--c-gold-foil);
+  mix-blend-mode: screen;
+  opacity: 0;
+  transform: translateX(-130%) skewX(-12deg);
+  pointer-events: none;
+}
+.btn--gold:hover::before {
+  animation: btn-gold-sheen var(--t-slower) var(--ease-out) 1;
+}
+@keyframes btn-gold-sheen {
+  0%   { opacity: 0;    transform: translateX(-130%) skewX(-12deg); }
+  18%  { opacity: 0.7; }
+  100% { opacity: 0;    transform: translateX(230%)  skewX(-12deg); }
 }
 
 .btn--outline {
@@ -64,6 +92,38 @@
 .btn--ghost:hover {
   --btn-bg: var(--c-cream-warm);
 }
+
+/* The ONLY button safe inside .section--band / on the maroon ground:
+   transparent fill, gold hairline border, cream label, a gold-foil underline accent;
+   hover inverts to a cream fill with maroon text. */
+.btn--on-dark {
+  --btn-bg: transparent;
+  --btn-fg: var(--c-cream);
+  --btn-bd: var(--c-line-on-dark);
+  border-width: 1.5px;
+  box-shadow: none;
+}
+.btn--on-dark::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 9px;
+  width: 38%;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--c-gold-foil);
+  transform: translateX(-50%) scaleX(0.55);
+  transform-origin: center;
+  opacity: 0.9;
+  transition: transform var(--t-med) var(--ease-out), opacity var(--t-fast) var(--ease-out);
+  pointer-events: none;
+}
+.btn--on-dark:hover {
+  --btn-bg: var(--c-cream);
+  --btn-fg: var(--c-red);
+  --btn-bd: var(--c-cream);
+}
+.btn--on-dark:hover::after { transform: translateX(-50%) scaleX(0.85); opacity: 0; }
 
 .btn--lg { padding: var(--sp-4) var(--sp-7); font-size: var(--fs-300); }
 .btn--sm { padding: var(--sp-2) var(--sp-4); font-size: var(--fs-100); min-height: 36px; }
@@ -99,37 +159,46 @@
   border: 1px solid var(--c-line);
   border-radius: var(--r-lg);
   padding: var(--sp-6);
-  box-shadow: var(--sh-1);
+  box-shadow: var(--sh-2);
   position: relative;
 }
 .card--ornate {
   background:
     linear-gradient(var(--c-cream-soft), var(--c-cream-soft)) padding-box,
-    linear-gradient(135deg, var(--c-gold) 0%, var(--c-gold-dark) 50%, var(--c-gold) 100%) border-box;
+    var(--c-gold-foil-soft) border-box;
   border: 1.5px solid transparent;
+  /* warm drop + a faint inset zari hairline that traces the inner edge of the foil frame */
+  box-shadow: var(--sh-2), inset 0 0 0 1px rgba(212, 175, 55, 0.35);
 }
 
 /* Event card (used on home + celebration) */
 .event-card {
-  background: var(--c-cream-soft);
+  /* gold-foil frame via the proven padding-box / border-box technique */
+  background:
+    var(--c-cream-soft) padding-box,
+    var(--c-gold-foil-soft) border-box;
+  border: 1.5px solid transparent;
   border-radius: var(--r-lg);
   padding: var(--sp-6);
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform var(--t-med) var(--ease-out), box-shadow var(--t-med) var(--ease-out);
-  border: 1px solid var(--c-line);
+  transition: transform var(--t-med) var(--ease-spring), box-shadow var(--t-med) var(--ease-out);
+  box-shadow: var(--sh-2);
 }
-.event-card:hover { transform: translateY(-4px); box-shadow: var(--sh-2); }
+.event-card:hover { transform: translateY(-6px); box-shadow: var(--sh-3); }
 .event-card__motif {
   position: absolute;
   top: -8px; right: -8px;
   width: 80px; height: 80px;
   background: url('../assets/motifs/kolam-corner.svg') no-repeat center / contain;
-  opacity: 0.35;
+  opacity: 0.55;
   pointer-events: none;
+  transition: transform var(--t-med) var(--ease-out), opacity var(--t-med) var(--ease-out);
+  transform-origin: top right;
 }
+.event-card:hover .event-card__motif { transform: scale(1.1); opacity: 0.7; }
 .event-card__day {
   font-family: var(--ff-sans);
   font-size: var(--fs-100);
@@ -137,11 +206,12 @@
   text-transform: uppercase;
   color: var(--c-gold-dark);
   margin: 0 0 var(--sp-2);
-  font-weight: 700;
+  font-weight: 600;
 }
 .event-card__title {
   font-family: var(--ff-serif);
   font-size: var(--fs-600);
+  font-weight: 600;
   color: var(--c-red);
   margin: 0 0 var(--sp-2);
   letter-spacing: var(--ls-tight);
@@ -156,6 +226,7 @@
 }
 .event-card__blurb { flex: 1; margin: 0 0 var(--sp-5); color: var(--c-ink-soft); }
 .event-card__link {
+  position: relative;
   font-family: var(--ff-sans);
   font-size: var(--fs-200);
   letter-spacing: var(--ls-wide);
@@ -166,20 +237,66 @@
   align-self: flex-start;
   border-bottom: 2px solid var(--c-gold);
   padding-bottom: 2px;
+  transition: color var(--t-fast) var(--ease-out), border-bottom-color var(--t-fast) var(--ease-out);
+}
+/* maroon underline wipes in beneath the foil rule on hover */
+.event-card__link::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  bottom: -2px;
+  height: 2px;
+  background: var(--c-red);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--t-med) var(--ease-out);
 }
 .event-card__link:hover { color: var(--c-red-dark); border-bottom-color: var(--c-red); }
+.event-card__link:hover::after { transform: scaleX(1); }
+
+/* Day-3 climax: the wedding day becomes the deep-maroon visual peak of the three-day grid */
+.event-card--feature {
+  /* deep-maroon fill inside a gold-foil frame */
+  background:
+    var(--grad-band) padding-box,
+    var(--c-gold-foil) border-box;
+  border: 1.5px solid transparent;
+  box-shadow: var(--sh-4);
+  --c-focus: var(--c-focus-on-dark);   /* keep the focus halo visible on maroon */
+}
+.event-card--feature:hover { box-shadow: var(--sh-4), var(--glow-gold); }
+.event-card--feature .event-card__day,
+.event-card--feature .event-card__title { color: var(--c-gold-light); }       /* ~7.4:1 on maroon */
+.event-card--feature .event-card__date,
+.event-card--feature .event-card__venue,
+.event-card--feature .event-card__blurb { color: var(--c-cream); }             /* ~10.9:1 on maroon */
+/* beat the inline color on the Tamil display span so it stays legible on the band */
+.event-card--feature .event-card__title [lang="ta"] { color: var(--c-gold-light) !important; }
+.event-card--feature .event-card__link {
+  color: var(--c-cream);
+  border-bottom-color: var(--c-gold);
+}
+.event-card--feature .event-card__link::after { background: var(--c-cream); }
+.event-card--feature .event-card__link:hover { color: var(--c-gold-light); border-bottom-color: var(--c-gold-light); }
+/* recolour the kolam corner to gold-light via mask so it reads on the dark ground */
+.event-card--feature .event-card__motif {
+  background: var(--c-gold-light);
+  opacity: 0.6;
+  -webkit-mask: url('../assets/motifs/kolam-corner.svg') no-repeat center / contain;
+          mask: url('../assets/motifs/kolam-corner.svg') no-repeat center / contain;
+}
 
 /* -------- Form controls -------- */
 .field { display: flex; flex-direction: column; gap: var(--sp-2); margin-bottom: var(--sp-5); }
 .field__label {
   font-family: var(--ff-sans);
   font-size: var(--fs-200);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: var(--ls-wide);
   text-transform: uppercase;
   color: var(--c-ink-soft);
 }
-.field__hint { font-size: var(--fs-200); color: var(--c-ink-muted); }
+.field__hint { font-size: var(--fs-200); color: var(--c-ink-soft); }   /* ~7.2:1 tertiary text */
 .field__error {
   font-size: var(--fs-200);
   color: var(--c-error);
@@ -195,13 +312,13 @@
   border: 1.5px solid var(--c-line);
   border-radius: var(--r-md);
   color: var(--c-ink);
-  transition: border-color var(--t-fast) var(--ease-out), background var(--t-fast) var(--ease-out);
+  transition: border-color var(--t-fast) var(--ease-out), background var(--t-fast) var(--ease-out), box-shadow var(--t-fast) var(--ease-out);
   min-height: 44px;
 }
 .input:hover, .textarea:hover, .select:hover { border-color: var(--c-line-strong); }
 .input:focus-visible, .textarea:focus-visible, .select:focus-visible {
   border-color: var(--c-red);
-  outline: 2px solid var(--c-gold-dark);
+  outline: 2px solid var(--c-focus);
   outline-offset: 2px;
   background: var(--c-cream);
 }
@@ -229,7 +346,7 @@
   border-radius: var(--r-md);
   cursor: pointer;
   background: var(--c-cream-soft);
-  transition: border-color var(--t-fast) var(--ease-out), background var(--t-fast) var(--ease-out);
+  transition: border-color var(--t-fast) var(--ease-out), background var(--t-fast) var(--ease-out), box-shadow var(--t-fast) var(--ease-out);
   min-height: 44px;
 }
 .choice:hover { border-color: var(--c-line-strong); }
@@ -251,6 +368,7 @@
   margin-bottom: var(--sp-4);
 }
 .rsvp-toggle__option {
+  position: relative;
   display: flex; align-items: center; justify-content: center;
   padding: var(--sp-4);
   border: 1.5px solid var(--c-line);
@@ -263,8 +381,9 @@
   cursor: pointer;
   text-align: center;
   min-height: 60px;
-  transition: all var(--t-fast) var(--ease-out);
+  transition: background var(--t-fast) var(--ease-out), color var(--t-fast) var(--ease-out), border-color var(--t-fast) var(--ease-out), box-shadow var(--t-fast) var(--ease-out);
 }
+.rsvp-toggle__option:hover { border-color: var(--c-line-strong); }
 .rsvp-toggle__option input { position: absolute; opacity: 0; pointer-events: none; }
 .rsvp-toggle__option:has(input:checked) {
   background: var(--c-red);
@@ -273,7 +392,7 @@
   box-shadow: var(--sh-2);
 }
 .rsvp-toggle__option[data-value="no"]:has(input:checked)    { background: var(--c-ink); border-color: var(--c-ink); }
-.rsvp-toggle__option[data-value="maybe"]:has(input:checked) { background: var(--c-gold-dark); border-color: var(--c-gold-dark); }
+.rsvp-toggle__option[data-value="maybe"]:has(input:checked) { background: var(--c-gold-dark); border-color: var(--c-gold-dark); }  /* cream-on-it ~4.96:1 AA */
 
 /* Toast/notice */
 .notice {

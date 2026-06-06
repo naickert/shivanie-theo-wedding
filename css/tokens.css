@@ -1,58 +1,87 @@
 /* Design tokens — Shivanie & Theo wedding website
-   Traditional Tamil temple-inspired palette.
-   Gold is decorative only (fails contrast on cream); body text is charcoal on cream. */
+   "Modern traditional Tamil": Kanjivaram silk maroon + zari gold foil on silk cream,
+   peacock / mango-leaf / turmeric accents, kolam line-art, editorial type.
+   GOLD RULE: --c-gold / --c-gold-light are DECORATIVE ONLY (fail as text on cream).
+   For gold-ish TEXT on cream use --c-gold-dark (now AA-safe ~4.6:1) or maroon.
+   On the deep-maroon band (--c-surface-dark) gold BECOMES legible as text. */
 
 :root {
   /* ---- Brand colour ---- */
-  --c-red:           #8B1538;   /* Kanjivaram deep red — primary brand */
-  --c-red-dark:      #6B0F2A;
-  --c-red-light:     #B83A5C;
-  --c-gold:          #D4AF37;   /* Zari gold — DECORATIVE ONLY */
-  --c-gold-dark:     #9E821C;
-  --c-gold-light:    #E6C765;
+  --c-red:           #7E1431;   /* Kanjivaram "arakku" silk maroon — primary brand */
+  --c-red-dark:      #5C1026;   /* Deep band / footer anchor */
+  --c-red-light:     #A83052;   /* DECORATIVE / large-text only (~4.6:1, no margin) */
+  --c-gold:          #D4AF37;   /* Zari gold — DECORATIVE ONLY (fails as text on cream) */
+  --c-gold-dark:     #786012;   /* Antique zari — AA-safe gold-ish TEXT on cream (~4.6:1) */
+  --c-gold-light:    #E6C765;   /* DECORATIVE on cream; AA as TEXT only on dark band */
   --c-cream:         #F5E6D3;   /* Silk cream — page background */
   --c-cream-soft:    #FAF1E1;   /* Cards / panels */
-  --c-cream-warm:    #EFDDC4;   /* Subtle alt */
-  --c-peacock:       #1B4965;   /* Peacock blue — accent links, secondary CTAs */
+  --c-cream-warm:    #EFDDC4;   /* Subtle alt / grounds */
+  --c-peacock:       #1B4965;   /* Peacock blue — ceremony accent, secondary CTAs */
   --c-peacock-dark:  #11324A;
-  --c-forest:        #2D5016;   /* Mango leaf green — sparingly */
-  --c-saffron:       #F4A460;   /* Saffron — highlight only */
+  --c-forest:        #2D5016;   /* Mango-leaf green — toran, organic accents */
+  --c-saffron:       #F4A460;   /* Saffron — highlight only (decorative) */
+
+  /* ---- NEW brand additions ---- */
+  --c-gold-darker:   #5E4A0F;   /* Deepest foil stop / gold-button hover */
+  --c-turmeric:      #C9870A;   /* Manjal / turmeric — Nalangu accent (DECORATIVE / large only) */
+  --c-surface-dark:  var(--c-red-dark);   /* Cinematic deep-maroon band surface */
+  --c-ink-on-dark:   var(--c-cream);       /* Body text on the maroon band (~10.9:1) */
+  --c-band-cream:    #EFE0CA;   /* Subtle warm ground under card bands */
+  /* Gold "foil" gradients — use as background-image / border-box / clip-text-on-dark, never as cream-side text */
+  --c-gold-foil:      linear-gradient(135deg, var(--c-gold-light) 0%, var(--c-gold) 45%, var(--c-gold-dark) 100%);
+  --c-gold-foil-soft: linear-gradient(135deg, var(--c-gold) 0%, var(--c-gold-dark) 55%, var(--c-gold) 100%);
+  --c-line-on-dark:   rgba(230, 199, 101, 0.32);  /* gold hairline dividers / borders on the maroon band */
+
+  /* ---- Composed cinematic backgrounds (centralised so every view stays coherent) ---- */
+  /* Deep-maroon full-bleed band / footer / feature card — cream text AA-safe (~10.9:1) */
+  --grad-band:   linear-gradient(165deg, var(--c-red) 0%, var(--c-red-dark) 100%);
+  /* Layered hero ground: faint zari halo at top, silk-cream wash deepening to warm cream at the base */
+  --grad-hero:   radial-gradient(125% 80% at 50% -12%, rgba(212, 175, 55, 0.16) 0%, transparent 55%),
+                 linear-gradient(180deg, var(--c-cream) 0%, var(--c-cream-soft) 58%, var(--c-cream-warm) 100%);
+  /* Subtle deep-maroon vignette to seat the bottom edge of a cinematic hero (decorative; keeps red-on-cream text AA) */
+  --grad-vignette-maroon: radial-gradient(150% 62% at 50% 132%, rgba(92, 16, 38, 0.18) 0%, transparent 62%);
 
   /* ---- Functional colour ---- */
-  --c-ink:           #1A1A1A;   /* Body text */
-  --c-ink-soft:      #4A4A4A;   /* Secondary text */
-  --c-ink-muted:     #767676;   /* Tertiary, captions */
+  --c-ink:           #1A1A1A;   /* Body text (~14:1 on cream) */
+  --c-ink-soft:      #4A4A4A;   /* Secondary text (~7.2:1) */
+  --c-ink-muted:     #5E5E5E;   /* Tertiary, captions (~5.2:1 — now AA for body) */
   --c-line:          #C9B89A;   /* Subtle dividers on cream */
   --c-line-strong:   #8C7853;   /* Stronger dividers */
   --c-error:         #A12A2A;
   --c-success:       #2D5016;
-  --c-focus:         var(--c-gold-dark);  /* High contrast on cream */
+  --c-focus:         var(--c-gold-dark);  /* ~4.6:1 on cream, >=3:1 on cards */
+  --c-focus-on-dark: var(--c-gold-light); /* focus ring colour on the deep-maroon band (~7.4:1) */
 
   /* ---- Typography ---- */
-  --ff-serif:        "Playfair Display", "Garamond", "Georgia", serif;
-  --ff-sans:         "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-  --ff-tamil:        "Noto Sans Tamil", "Nirmala UI", "Latha", "Lato", sans-serif;
+  --ff-serif:        "Fraunces", "Cormorant Garamond", "Georgia", serif;   /* editorial display + body serif (variable opsz) */
+  --ff-sans:         "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --ff-tamil:        "Noto Sans Tamil", "Nirmala UI", "Latha", sans-serif;        /* body / UI Tamil */
+  --ff-display:      var(--ff-serif);       /* alias for large display headings */
+  --ff-tamil-serif:  "Noto Serif Tamil", "Latha", "Georgia", serif;        /* DISPLAY Tamil — harmonises with serif Latin */
 
-  --fs-100: 0.75rem;    /* 12 */
-  --fs-200: 0.875rem;   /* 14 */
-  --fs-300: 1rem;       /* 16 — body default */
-  --fs-400: 1.125rem;   /* 18 */
-  --fs-500: 1.375rem;   /* 22 */
-  --fs-600: 1.75rem;    /* 28 */
-  --fs-700: 2.25rem;    /* 36 */
-  --fs-800: 3rem;       /* 48 */
-  --fs-900: 4.25rem;    /* 68 */
-  --fs-hero: clamp(2.75rem, 7vw + 1rem, 5.5rem);
+  /* Type scale — Major-Third-ish, reading sizes opened up, mid-display fluid */
+  --fs-100: 0.75rem;     /* 12 */
+  --fs-200: 0.8125rem;   /* 13 — tracked micro-caps */
+  --fs-300: 1rem;        /* 16 — body default */
+  --fs-400: 1.25rem;     /* 20 — lead / intro (clear gap above body) */
+  --fs-500: 1.5rem;      /* 24 */
+  --fs-600: clamp(1.6rem, 1.35rem + 1.1vw, 1.9375rem);   /* ~26 -> 31 */
+  --fs-700: clamp(1.95rem, 1.5rem + 2vw, 2.4375rem);     /* ~31 -> 39 */
+  --fs-800: clamp(2.3rem, 1.7rem + 3vw, 3.0625rem);      /* ~37 -> 49 */
+  --fs-900: clamp(3rem, 2rem + 5vw, 4.25rem);            /* ~48 -> 68 (display ceiling) */
+  --fs-hero: clamp(2.85rem, 6vw + 1rem, 5.75rem);
 
-  --lh-tight:  1.1;
-  --lh-snug:   1.25;
-  --lh-base:   1.55;
-  --lh-loose:  1.75;
+  --lh-tight:  1.08;
+  --lh-snug:   1.2;
+  --lh-base:   1.6;
+  --lh-loose:  1.8;
+  --lh-tamil:  1.7;     /* Tamil glyphs carry tall loops — more leading */
 
-  --ls-tight:  -0.02em;
-  --ls-base:   0;
-  --ls-wide:   0.08em;
-  --ls-wider:  0.18em;
+  --ls-tight:   -0.02em;
+  --ls-base:    0;
+  --ls-wide:    0.08em;
+  --ls-wider:   0.2em;     /* tracked micro-caps */
+  --ls-display: -0.035em;  /* tighten large serif display (>=50px) */
 
   /* ---- Spacing scale (8pt) ---- */
   --sp-0:  0;
@@ -62,34 +91,50 @@
   --sp-4:  1rem;
   --sp-5:  1.5rem;
   --sp-6:  2rem;
+  --sp-6b: 2.5rem;     /* mid-step to smooth 2->3rem jump */
   --sp-7:  3rem;
   --sp-8:  4rem;
   --sp-9:  6rem;
   --sp-10: 8rem;
+  /* Fluid section rhythm */
+  --sp-section:    clamp(3.5rem, 8vw, 7rem);
+  --sp-section-lg: clamp(5rem, 11vw, 9rem);
 
   /* ---- Radii ---- */
   --r-sm: 4px;
   --r-md: 8px;
   --r-lg: 16px;
+  --r-xl: 20px;
+  --r-card: 18px;      /* refined cards */
   --r-pill: 999px;
 
-  /* ---- Shadows (soft, never harsh on cream) ---- */
+  /* ---- Shadows (soft, warm-brown alpha — never harsh neutral black on cream) ---- */
   --sh-1: 0 1px 2px rgba(74, 50, 26, 0.06), 0 1px 1px rgba(74, 50, 26, 0.04);
   --sh-2: 0 4px 12px rgba(74, 50, 26, 0.08), 0 2px 4px rgba(74, 50, 26, 0.04);
   --sh-3: 0 12px 32px rgba(74, 50, 26, 0.12), 0 4px 8px rgba(74, 50, 26, 0.06);
+  --sh-4: 0 28px 64px rgba(74, 30, 20, 0.18), 0 10px 22px rgba(74, 30, 20, 0.10);  /* hero / ornate climax */
+  --glow-gold: 0 0 0 1px rgba(212, 175, 55, 0.40), 0 6px 26px rgba(212, 175, 55, 0.16);  /* gold hairline + soft glow */
 
   /* ---- Layout ---- */
-  --container-max: 72rem;
+  --container-max:    72rem;
+  --container-wide:   80rem;   /* occasional roomier inner */
   --container-narrow: 44rem;
-  --container-text:  38rem;
+  --container-text:   38rem;
 
   /* ---- Motion ---- */
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --t-fast: 120ms;
-  --t-med: 240ms;
-  --t-slow: 480ms;
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);     /* expressive expo */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);  /* gentle overshoot for lifts */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);     /* symmetric reveals */
+  --t-fast:   120ms;
+  --t-med:    240ms;
+  --t-slow:   480ms;
+  --t-slower: 720ms;   /* kolam draw-on / shimmer entrances */
 }
 
+/* Reduced motion: collapse all animation/transition AND guarantee final visible state.
+   Because every reveal in this system is a CSS keyframe entrance (fill-mode forwards,
+   NO JS-hidden start-state), collapsing duration lands every element on its visible
+   end-frame — nothing is ever left hidden. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

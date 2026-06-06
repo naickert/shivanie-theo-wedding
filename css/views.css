@@ -1,83 +1,145 @@
-/* Per-view tweaks — page-specific styles */
+/* ============================================================================
+   views.css — per-view presentation
+   "Arakku Silk, Modern Cut": cinematic hero, premium hairline countdown,
+   editorial page headers, drawn-on timeline, signposted RSVP, motif glossary.
+   Owns: hero*, countdown*, three-day, page-header*, timeline*, info-panel,
+   faq-item, rsvp-step/rsvp-summary, glossary, distance-table, with-aside,
+   loading, PLUS new .hero--gate and .gate.
+   Tokens referenced by name from tokens.css — never redefined here.
+   ========================================================================== */
 
-/* -------- HOME -------- */
+/* =======================  HOME / GATE HERO  ============================== */
+
+/* Cinematic hero that owns the first screen. Decorative art (.hero__watermark,
+   .gopuram-arch, .toran) is positioned absolutely by motifs.css; the in-flow
+   .container is lifted above it. */
 .hero {
   position: relative;
-  padding: var(--sp-9) 0 var(--sp-8);
+  isolation: isolate;            /* contain decorative z-index inside the hero */
+  min-height: clamp(78vh, 86vh, 900px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
-  background:
-    radial-gradient(ellipse at top, rgba(212, 175, 55, 0.10) 0%, transparent 60%),
-    linear-gradient(180deg, var(--c-cream) 0%, var(--c-cream-soft) 100%);
+  padding: var(--sp-8) 0;
+  /* maroon vignette seats the lower edge OVER the silk-cream zari-halo ground */
+  background: var(--grad-vignette-maroon), var(--grad-hero);
   overflow: hidden;
 }
+.hero .container {
+  position: relative;
+  z-index: 1;                    /* sit above watermark / gopuram / toran */
+}
+
 .hero__motif-top {
   width: 200px; height: 60px;
   margin: 0 auto var(--sp-5);
   background: url('../assets/motifs/gold-divider.svg') no-repeat center / contain;
   opacity: 0.9;
+  animation: hero-rise var(--t-slow) var(--ease-out) both;
 }
+
 .hero__eyebrow {
   display: block;
   font-family: var(--ff-sans);
   font-size: var(--fs-200);
+  font-weight: 600;              /* unified micro-cap weight */
   letter-spacing: var(--ls-wider);
   text-transform: uppercase;
   color: var(--c-gold-dark);
   margin-bottom: var(--sp-4);
+  animation: hero-rise var(--t-slow) var(--ease-out) both;
+  animation-delay: 60ms;
 }
+
 .hero__title {
   font-family: var(--ff-serif);
   font-size: var(--fs-hero);
-  font-weight: 500;
-  line-height: 1.05;
-  margin: 0 auto var(--sp-3);
+  font-weight: 600;              /* confident editorial display */
+  line-height: var(--lh-tight);
+  letter-spacing: var(--ls-display);
   color: var(--c-red);
-  letter-spacing: var(--ls-tight);
+  margin: 0 auto var(--sp-4);
+  text-wrap: balance;
+  animation: hero-rise var(--t-slow) var(--ease-out) both;
+  animation-delay: 140ms;
 }
 .hero__title .name { font-style: italic; }
+
+/* ≥720px: stack Shivanie / ornament / Theo as a centred display grid */
+@media (min-width: 720px) {
+  .hero__title {
+    display: grid;
+    justify-items: center;
+    gap: var(--sp-2);
+  }
+}
+
 .hero__date {
   font-family: var(--ff-serif);
   font-size: var(--fs-500);
   color: var(--c-ink);
   margin: 0 0 var(--sp-2);
+  animation: hero-rise var(--t-slow) var(--ease-out) both;
+  animation-delay: 220ms;
 }
+/* Tamil date promoted to co-equal display — serif Tamil, dignified maroon */
 .hero__date-ta {
   display: block;
-  font-family: var(--ff-tamil);
-  font-size: var(--fs-300);
-  color: var(--c-ink-soft);
-  margin-top: var(--sp-1);
+  font-family: var(--ff-tamil-serif);
+  font-size: var(--fs-400);
+  font-weight: 500;
+  color: var(--c-red);
+  letter-spacing: var(--ls-base);
+  margin-top: var(--sp-2);
 }
+
 .hero__location {
   font-size: var(--fs-300);
   color: var(--c-ink-soft);
   margin: 0 0 var(--sp-6);
   letter-spacing: var(--ls-wide);
   text-transform: uppercase;
+  animation: hero-rise var(--t-slow) var(--ease-out) both;
+  animation-delay: 280ms;
 }
+
 .hero__cta-row {
   display: flex;
   justify-content: center;
   gap: var(--sp-4);
   flex-wrap: wrap;
   margin-bottom: var(--sp-7);
+  animation: hero-rise var(--t-slow) var(--ease-out) both;
+  animation-delay: 340ms;
 }
 
-/* Countdown */
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ---- Gate hero (not-invited — first impression for uninvited visitors) ---- */
+.hero--gate {
+  min-height: clamp(84vh, 92vh, 980px);
+}
+
+/* =======================  COUNTDOWN  ===================================== */
+
+/* Premium, frameless: thin gold-foil hairline dividers instead of a pill */
 .countdown {
   display: inline-flex;
   flex-wrap: nowrap;
   justify-content: center;
-  align-items: baseline;
-  gap: var(--sp-5);
-  padding: var(--sp-5) var(--sp-7);
-  background: var(--c-cream-soft);
-  border: 1px solid var(--c-line);
-  border-radius: var(--r-lg);
+  align-items: stretch;
   margin: 0 auto;
+  padding: var(--sp-4) 0;
   position: relative;
   max-width: 100%;
   box-sizing: border-box;
+  animation: hero-rise var(--t-slow) var(--ease-out) both;
+  animation-delay: 400ms;
 }
 .countdown__unit {
   display: flex;
@@ -85,39 +147,89 @@
   align-items: center;
   min-width: 72px;
   flex-shrink: 0;
+  padding: 0 var(--sp-5);
+  position: relative;
+}
+/* gold-foil hairline between units */
+.countdown__unit + .countdown__unit::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 64%;
+  background: var(--c-gold-foil);
+  opacity: 0.75;
 }
 .countdown__num {
   font-family: var(--ff-serif);
   font-size: var(--fs-700);
-  font-weight: 500;
-  color: var(--c-red);
+  font-weight: 600;
+  color: var(--c-red);                 /* ~7.5:1 on cream */
   line-height: 1;
   font-variant-numeric: tabular-nums;
+  animation: countdown-rise var(--t-slow) var(--ease-spring) both;
 }
+.countdown__unit:nth-child(2) .countdown__num { animation-delay: 460ms; }
+.countdown__unit:nth-child(3) .countdown__num { animation-delay: 520ms; }
 .countdown__label {
+  font-family: var(--ff-sans);
   font-size: var(--fs-100);
+  font-weight: 600;                    /* unified micro-cap weight */
   letter-spacing: var(--ls-wider);
   text-transform: uppercase;
   color: var(--c-gold-dark);
-  margin-top: var(--sp-1);
-  font-weight: 700;
+  margin-top: var(--sp-2);
 }
 
-/* Three-day card row */
+/* Entrance for the numerals */
+@keyframes countdown-rise {
+  from { opacity: 0; transform: translateY(0.4em); }
+  to   { opacity: 1; transform: none; }
+}
+/* Per-tick hook: a CSS-only out-then-in available to .countdown__num if a
+   refresh class is ever toggled. Reduced-motion safe via the global block. */
+@keyframes countdown-tick {
+  0%   { opacity: 1; transform: none; }
+  45%  { opacity: 0; transform: translateY(-0.3em); }
+  55%  { opacity: 0; transform: translateY(0.3em); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* Never overflow on small phones */
+@media (max-width: 420px) {
+  .countdown__unit { padding: 0 var(--sp-3); min-width: 0; }
+  .countdown__num  { font-size: var(--fs-600); }
+}
+
+/* =======================  THREE-DAY ROW  ================================= */
 .three-day {
-  padding: var(--sp-8) 0;
+  padding: var(--sp-section) 0;
 }
 
-/* -------- INFO PAGES -------- */
+/* =======================  GATE WRAPPER  ================================== */
+
+/* Centres the not-invited .card--ornate vertically — no dead cream void
+   above the footer. Markup builder wraps the code-entry area in .gate. */
+.gate {
+  min-height: clamp(48vh, 58vh, 720px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =======================  PAGE HEADER (info pages)  ====================== */
 .page-header {
   text-align: center;
-  padding: var(--sp-8) 0 var(--sp-6);
+  padding: var(--sp-section) 0 var(--sp-6);
   position: relative;
 }
 .page-header__eyebrow {
   display: block;
   font-family: var(--ff-sans);
   font-size: var(--fs-200);
+  font-weight: 600;                    /* unified micro-cap weight */
   letter-spacing: var(--ls-wider);
   text-transform: uppercase;
   color: var(--c-gold-dark);
@@ -134,14 +246,23 @@
   font-size: var(--fs-400);
   color: var(--c-ink-soft);
 }
+/* RSVP: widen the heading measure to match the --container-narrow form below.
+   Scoped precisely to the page-header that is immediately followed by the form. */
+.page-header.container--text:has(+ .container--narrow) {
+  max-width: var(--container-narrow);
+}
+.page-header.container--text:has(+ .container--narrow) .page-header__lead {
+  max-width: none;
+}
 
-/* Timeline (used on event pages) */
+/* =======================  TIMELINE (event pages)  ======================== */
 .timeline {
   list-style: none;
   padding: 0;
   margin: var(--sp-6) 0;
   position: relative;
 }
+/* Vertical gold rule, drawn on from the top */
 .timeline::before {
   content: "";
   position: absolute;
@@ -149,7 +270,13 @@
   top: 0; bottom: 0;
   width: 2px;
   background: linear-gradient(180deg, var(--c-gold) 0%, var(--c-gold-dark) 100%);
-  opacity: 0.6;
+  opacity: 0.7;
+  transform-origin: top center;
+  animation: timeline-draw var(--t-slower) var(--ease-out) both;
+}
+@keyframes timeline-draw {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
 }
 .timeline__item {
   display: grid;
@@ -168,8 +295,26 @@
   border: 2px solid var(--c-red);
   border-radius: 50%;
   z-index: 1;
+  animation: dot-pop var(--t-slow) var(--ease-spring) both;
 }
-.timeline__item--peak::before { background: var(--c-red); box-shadow: 0 0 0 4px rgba(139, 21, 56, 0.18); }
+/* staggered dot reveal, sequenced after the rule draws on */
+.timeline__item:nth-child(1)::before { animation-delay: 0.14s; }
+.timeline__item:nth-child(2)::before { animation-delay: 0.24s; }
+.timeline__item:nth-child(3)::before { animation-delay: 0.34s; }
+.timeline__item:nth-child(4)::before { animation-delay: 0.44s; }
+.timeline__item:nth-child(5)::before { animation-delay: 0.54s; }
+.timeline__item:nth-child(6)::before { animation-delay: 0.64s; }
+.timeline__item:nth-child(7)::before { animation-delay: 0.74s; }
+.timeline__item:nth-child(n+8)::before { animation-delay: 0.84s; }
+@keyframes dot-pop {
+  from { opacity: 0; transform: scale(0); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.timeline__item--peak::before {
+  background: var(--c-red);
+  border-color: var(--c-red);
+  box-shadow: 0 0 0 4px rgba(126, 20, 49, 0.18), var(--glow-gold);
+}
 .timeline__time {
   font-family: var(--ff-serif);
   font-weight: 700;
@@ -178,41 +323,56 @@
   text-align: right;
   padding-top: var(--sp-1);
 }
-.timeline__body {
-  padding-left: var(--sp-5);
+.timeline__body { padding-left: var(--sp-5); }
+.timeline__title {
+  font-weight: 600;
+  margin: 0 0 var(--sp-1);
+  color: var(--c-ink);
+  font-family: var(--ff-serif);
+  font-size: var(--fs-500);
 }
-.timeline__title { font-weight: 700; margin: 0 0 var(--sp-1); color: var(--c-ink); font-family: var(--ff-serif); font-size: var(--fs-500); }
-.timeline__desc  { margin: 0; color: var(--c-ink-soft); }
+.timeline__desc { margin: 0; color: var(--c-ink-soft); }
 .timeline__tag {
   display: inline-block;
   margin-top: var(--sp-2);
+  font-family: var(--ff-sans);
   font-size: var(--fs-100);
+  font-weight: 600;                    /* unified micro-cap weight */
   letter-spacing: var(--ls-wide);
   text-transform: uppercase;
   color: var(--c-gold-dark);
-  font-weight: 700;
 }
 
-/* Info panel (small dressed-up callout, used for "Venue", "Dress code" etc) */
+/* =======================  INFO PANEL  ==================================== */
 .info-panel {
+  position: relative;
   background: var(--c-cream-soft);
-  border-left: 4px solid var(--c-gold);
   padding: var(--sp-4) var(--sp-5);
   border-radius: 0 var(--r-md) var(--r-md) 0;
-  margin: var(--sp-4) 0;
+  margin: var(--sp-5) 0;
+  box-shadow: var(--sh-1);
+}
+/* gold-foil accent bar (replaces the flat 4px border) */
+.info-panel::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--c-gold-foil);
+  border-radius: var(--r-md) 0 0 var(--r-md);
 }
 .info-panel__label {
   font-family: var(--ff-sans);
   font-size: var(--fs-100);
+  font-weight: 600;                    /* unified micro-cap weight */
   letter-spacing: var(--ls-wider);
   text-transform: uppercase;
   color: var(--c-gold-dark);
-  font-weight: 700;
   margin: 0 0 var(--sp-1);
 }
 .info-panel__body { margin: 0; }
 
-/* FAQ items */
+/* =======================  FAQ DISCLOSURE  ================================ */
 .faq-item {
   border-bottom: 1px solid var(--c-line);
   padding: var(--sp-4) 0;
@@ -223,31 +383,57 @@
   cursor: pointer;
   font-family: var(--ff-serif);
   font-size: var(--fs-500);
+  font-weight: 500;
   color: var(--c-ink);
-  padding: var(--sp-3) 0;
+  padding: var(--sp-3) var(--sp-7) var(--sp-3) 0;
   position: relative;
-  padding-right: var(--sp-7);
+  transition: color var(--t-fast) var(--ease-out);
 }
+.faq-item summary:hover { color: var(--c-red); }
 .faq-item summary::-webkit-details-marker { display: none; }
+/* single rotating glyph: "+" turns to "×" on open */
 .faq-item summary::after {
   content: "+";
   position: absolute;
   right: 0; top: 50%;
-  transform: translateY(-50%);
+  transform: translateY(-50%) rotate(0deg);
+  transform-origin: center;
   color: var(--c-gold-dark);
+  font-family: var(--ff-sans);
+  font-weight: 400;
   font-size: var(--fs-600);
+  line-height: 1;
   transition: transform var(--t-med) var(--ease-out);
 }
-.faq-item[open] summary::after { content: "−"; }
-.faq-item__body { padding: var(--sp-3) 0 var(--sp-2); color: var(--c-ink-soft); }
+.faq-item[open] summary::after { transform: translateY(-50%) rotate(45deg); }
+.faq-item__body {
+  padding: var(--sp-3) 0 var(--sp-2);
+  color: var(--c-ink-soft);
+}
+/* smooth reveal of the disclosure body when opened */
+.faq-item[open] .faq-item__body {
+  animation: faq-reveal var(--t-med) var(--ease-out) both;
+}
+@keyframes faq-reveal {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: none; }
+}
 
-/* RSVP layout */
+/* =======================  RSVP  ========================================== */
+#rsvp-form { counter-reset: rsvp-step; }
+
 .rsvp-step {
   background: var(--c-cream-soft);
   border-radius: var(--r-lg);
   border: 1.5px solid var(--c-line);
   padding: var(--sp-6);
   margin-bottom: var(--sp-5);
+  box-shadow: var(--sh-1);
+  transition: box-shadow var(--t-med) var(--ease-out), border-color var(--t-med) var(--ease-out);
+}
+.rsvp-step:focus-within {
+  border-color: var(--c-gold-dark);
+  box-shadow: var(--sh-2);
 }
 .rsvp-step__heading {
   display: flex;
@@ -258,19 +444,57 @@
   margin: 0 0 var(--sp-2);
 }
 .rsvp-step__title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
   font-family: var(--ff-serif);
   font-size: var(--fs-600);
+  font-weight: 600;
   color: var(--c-red);
   margin: 0;
 }
+/* signpost: gold disc step number (maroon numeral on gold ≈ 6.4:1 AA) */
+.rsvp-step__title::before {
+  counter-increment: rsvp-step;
+  content: counter(rsvp-step);
+  flex: 0 0 auto;
+  width: 1.7em; height: 1.7em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--c-gold);
+  color: var(--c-red);
+  font-family: var(--ff-sans);
+  font-weight: 700;
+  font-size: 0.62em;
+  letter-spacing: 0;
+  box-shadow: inset 0 0 0 1.5px var(--c-gold-dark), var(--sh-1);
+}
 .rsvp-step__meta { color: var(--c-ink-soft); font-size: var(--fs-200); }
-.rsvp-step__detail { margin-top: var(--sp-5); padding-top: var(--sp-5); border-top: 1px dashed var(--c-line); }
+.rsvp-step__detail {
+  margin-top: var(--sp-5);
+  padding-top: var(--sp-5);
+  border-top: 1px dashed var(--c-line);
+}
 
 .rsvp-summary {
+  position: relative;
   background: var(--c-cream);
   border: 1.5px solid var(--c-gold-dark);
   border-radius: var(--r-lg);
   padding: var(--sp-6);
+  box-shadow: var(--sh-2);             /* visibly heavier */
+}
+/* gold-foil top hairline (rounded so it never clips inner focus rings) */
+.rsvp-summary::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--c-gold-foil);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
 }
 .rsvp-summary h3 { color: var(--c-red); margin-top: 0; }
 .rsvp-summary__line {
@@ -282,7 +506,7 @@
 }
 .rsvp-summary__line:last-child { border-bottom: 0; }
 
-/* Glossary table (cultural-guide) */
+/* =======================  GLOSSARY (cultural-guide)  ===================== */
 .glossary { list-style: none; padding: 0; margin: var(--sp-5) 0; }
 .glossary li {
   display: grid;
@@ -293,21 +517,47 @@
   margin: 0;
 }
 .glossary li:last-child { border-bottom: 0; }
-.glossary dt { font-family: var(--ff-serif); font-weight: 600; font-style: italic; color: var(--c-red); }
+.glossary dt {
+  position: relative;
+  padding-left: 1.3em;
+  font-family: var(--ff-serif);
+  font-weight: 600;
+  font-style: italic;
+  color: var(--c-red);
+}
+/* small decorative zari diamond motif marker (pure CSS, aria-irrelevant) */
+.glossary dt::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0.55em;
+  width: 0.5em; height: 0.5em;
+  background: var(--c-gold-foil);
+  transform: rotate(45deg);
+  border-radius: 1px;
+}
 .glossary dd { margin: 0; color: var(--c-ink-soft); }
 @media (max-width: 600px) {
   .glossary li { grid-template-columns: 1fr; gap: 0; }
 }
 
-/* Travel page distance table */
+/* =======================  DISTANCE TABLE (travel)  ======================= */
 .distance-table { width: 100%; border-collapse: collapse; margin: var(--sp-4) 0; }
 .distance-table th, .distance-table td {
-  padding: var(--sp-3); text-align: left;
+  padding: var(--sp-3);
+  text-align: left;
   border-bottom: 1px solid var(--c-line);
 }
-.distance-table th { font-family: var(--ff-sans); font-size: var(--fs-200); letter-spacing: var(--ls-wide); text-transform: uppercase; color: var(--c-gold-dark); }
+.distance-table th {
+  font-family: var(--ff-sans);
+  font-size: var(--fs-200);
+  font-weight: 600;                    /* unified micro-cap weight */
+  letter-spacing: var(--ls-wide);
+  text-transform: uppercase;
+  color: var(--c-gold-dark);
+  border-bottom: 2px solid var(--c-line-strong);
+}
 
-/* Two-column layout for content + sidebar info */
+/* =======================  TWO-COLUMN (content + aside)  ================== */
 .with-aside {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 18rem;
@@ -318,11 +568,37 @@
   .with-aside { grid-template-columns: 1fr; }
 }
 
-/* Loading state */
+/* =======================  LOADING STATE  ================================= */
 .loading {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 40vh;
   color: var(--c-ink-muted);
+  animation: loading-pulse 1.6s var(--ease-in-out) infinite;
+}
+@keyframes loading-pulse {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+
+/* =======================  REDUCED-MOTION GUARDS  =========================
+   The global block in tokens.css collapses durations; here we also zero the
+   staggered delays so every animated view element lands on its visible
+   end-state immediately (no flash of hidden content during a delay window). */
+@media (prefers-reduced-motion: reduce) {
+  .hero__motif-top,
+  .hero__eyebrow,
+  .hero__title,
+  .hero__date,
+  .hero__location,
+  .hero__cta-row,
+  .countdown,
+  .countdown__num,
+  .timeline::before,
+  .timeline__item::before,
+  .faq-item[open] .faq-item__body,
+  .loading {
+    animation-delay: 0ms !important;
+  }
 }

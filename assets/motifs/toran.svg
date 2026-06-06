@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 56" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <!-- Maavilai thoranam: a draped string of mango leaves with a gold bell.
+       One seamless tile (string meets at y=8 on both edges) so it repeats-x along a threshold. -->
+  <defs>
+    <linearGradient id="tf" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E6C765"/>
+      <stop offset="0.5" stop-color="#D4AF37"/>
+      <stop offset="1" stop-color="#786012"/>
+    </linearGradient>
+  </defs>
+  <!-- swag string -->
+  <path d="M0 8 Q 60 30, 120 8" stroke="url(#tf)" stroke-width="2"/>
+  <!-- tie knots at the posts (overlap seamlessly when tiled) -->
+  <circle cx="0"   cy="8" r="2.6" fill="url(#tf)"/>
+  <circle cx="120" cy="8" r="2.6" fill="url(#tf)"/>
+  <!-- hanging mango leaves (forest green with a gold midrib) -->
+  <g fill="#2D5016" stroke="url(#tf)" stroke-width="0.8">
+    <path d="M24 15   C 17 23, 19 33, 24 39   C 29 33, 31 23, 24 15 Z"/>
+    <path d="M48 18.6 C 41 27, 43 37, 48 43   C 53 37, 55 27, 48 18.6 Z"/>
+    <path d="M72 18.6 C 65 27, 67 37, 72 43   C 77 37, 79 27, 72 18.6 Z"/>
+    <path d="M96 15   C 89 23, 91 33, 96 39   C 101 33, 103 23, 96 15 Z"/>
+  </g>
+  <g stroke="url(#tf)" stroke-width="0.6" opacity="0.85">
+    <path d="M24 17 L24 37"/>
+    <path d="M48 20.6 L48 41"/>
+    <path d="M72 20.6 L72 41"/>
+    <path d="M96 17 L96 37"/>
+  </g>
+  <!-- centre gold bell -->
+  <path d="M55 19 Q60 16, 65 19 L62.5 30 Q60 35, 57.5 30 Z" fill="url(#tf)" stroke="none"/>
+  <circle cx="60" cy="34.5" r="2.2" fill="url(#tf)"/>
+</svg>

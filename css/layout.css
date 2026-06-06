@@ -1,40 +1,66 @@
-/* Layout: container, header, footer, grid utilities */
+/* Layout: container, header, footer, grid, section rhythm + cinematic maroon bands.
+   "Arakku Silk, Modern Cut" — silk-cream grounds opened with intentional whitespace,
+   punctuated by full-bleed deep-maroon (--grad-band) bands so the eye travels through
+   a light/dark rhythm. Gold is woven thread only (foil hairlines, never cream-side text). */
 
+/* -------- Container -------- */
 .container {
   width: 100%;
   max-width: var(--container-max);
-  margin: 0 auto;
-  padding: 0 var(--sp-5);
+  margin-inline: auto;
+  /* Generous on desktop, tighter on small phones */
+  padding-inline: clamp(var(--sp-4), 4vw, var(--sp-6));
 }
+.container--wide   { max-width: var(--container-wide); }
 .container--narrow { max-width: var(--container-narrow); }
 .container--text   { max-width: var(--container-text); }
 
+/* -------- Stack utilities -------- */
 .stack > * + * { margin-top: var(--sp-4); }
 .stack-sm > * + * { margin-top: var(--sp-2); }
 .stack-lg > * + * { margin-top: var(--sp-6); }
 .stack-xl > * + * { margin-top: var(--sp-8); }
 
+/* -------- Grid -------- */
 .grid { display: grid; gap: var(--sp-5); }
-.grid--3 { grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr)); }
-.grid--2 { grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); }
+
+/* Explicit ladder defeats the auto-fit orphan/stretch: 1 -> 2 -> 3 columns */
+.grid--3 { grid-template-columns: 1fr; }
+.grid--2 { grid-template-columns: 1fr; }
+@media (min-width: 640px) {
+  .grid--2 { grid-template-columns: repeat(2, 1fr); }
+  .grid--3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 992px) {
+  .grid--3 { grid-template-columns: repeat(3, 1fr); gap: var(--sp-6); }
+}
 
 .center-text { text-align: center; }
 
-/* -------- Header -------- */
+/* -------- Header (sticky glass) -------- */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgba(245, 230, 211, 0.92);
-  backdrop-filter: saturate(150%) blur(10px);
-  -webkit-backdrop-filter: saturate(150%) blur(10px);
-  border-bottom: 1px solid var(--c-line);
+  background: rgba(245, 230, 211, 0.88);
+  backdrop-filter: saturate(160%) blur(12px);
+  -webkit-backdrop-filter: saturate(160%) blur(12px);
+  box-shadow: var(--sh-1);   /* soft warm float — reads as glass over the cream below */
+}
+/* 2px zari (gold-foil) hairline along the bottom edge — replaces the flat 1px line */
+.site-header::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: var(--c-gold-foil);
+  pointer-events: none;
 }
 .site-header__inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 64px;
+  min-height: 66px;
   gap: var(--sp-4);
 }
 .site-header__brand {
@@ -49,13 +75,15 @@
   display: inline-flex;
   align-items: baseline;
   gap: 2px;
-  font-size: var(--fs-500);
+  font-size: var(--fs-600);          /* lifted from --fs-500 for more presence */
+  font-weight: 600;
   letter-spacing: var(--ls-wide);
+  line-height: 1;
 }
 .site-header__amp {
   color: var(--c-gold-dark);
   font-style: italic;
-  font-size: 0.85em;
+  font-size: 0.82em;
   margin: 0 1px;
 }
 
@@ -67,21 +95,38 @@
   gap: var(--sp-5);
 }
 .site-nav a {
+  position: relative;
   text-decoration: none;
   color: var(--c-ink);
+  font-family: var(--ff-sans);
   font-size: var(--fs-200);
+  font-weight: 500;
   letter-spacing: var(--ls-wide);
   text-transform: uppercase;
   padding: var(--sp-2) 0;
-  border-bottom: 2px solid transparent;
-  transition: border-color var(--t-fast) var(--ease-out), color var(--t-fast) var(--ease-out);
+  transition: color var(--t-fast) var(--ease-out);
+}
+/* Underline grows from the left via scaleX — gold-foil zari thread, not a colour swap */
+.site-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: var(--c-gold-foil);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--t-med) var(--ease-out);
 }
 .site-nav a:hover,
 .site-nav a[aria-current="page"] {
   color: var(--c-red);
-  border-bottom-color: var(--c-gold);
 }
-.site-nav a.btn { border-bottom: 0; }
+.site-nav a:hover::after,
+.site-nav a[aria-current="page"]::after {
+  transform: scaleX(1);
+}
+/* The RSVP pill is a button — no underline thread */
+.site-nav a.btn::after { content: none; }
 
 .site-header__nav-toggle {
   display: none;
@@ -111,8 +156,8 @@
     position: absolute;
     top: 100%; left: 0; right: 0;
     background: var(--c-cream);
-    border-bottom: 1px solid var(--c-line);
     box-shadow: var(--sh-2);
+    border-bottom: 1px solid var(--c-line);
     max-height: 0;
     overflow: hidden;
     transition: max-height var(--t-med) var(--ease-out);
@@ -121,7 +166,7 @@
   .site-nav__list {
     flex-direction: column;
     align-items: stretch;
-    padding: var(--sp-4) var(--sp-5);
+    padding: var(--sp-4) clamp(var(--sp-4), 4vw, var(--sp-6));
     gap: 0;
   }
   .site-nav__list li {
@@ -132,8 +177,8 @@
   .site-nav a {
     display: block;
     padding: var(--sp-4) 0;
-    border-bottom: 0;
   }
+  .site-nav a::after { content: none; }   /* no scaleX thread in the stacked menu */
   .site-nav a.btn {
     display: inline-flex;
     margin: 0 auto;
@@ -141,11 +186,13 @@
   }
 }
 
-/* Welcome banner (personalised) */
+/* -------- Welcome banner (personalised, maroon) -------- */
 .welcome-banner {
-  background: linear-gradient(180deg, var(--c-red) 0%, var(--c-red-dark) 100%);
-  color: var(--c-cream);
+  background: var(--grad-band);
+  color: var(--c-ink-on-dark);
+  border-bottom: 1px solid var(--c-line-on-dark);
   font-size: var(--fs-200);
+  --c-focus: var(--c-focus-on-dark);   /* gold-light focus ring stays visible on maroon */
 }
 .welcome-banner__inner {
   display: flex;
@@ -160,53 +207,23 @@
   font-style: italic;
   font-size: var(--fs-300);
 }
+.welcome-banner [lang="ta"] { font-family: var(--ff-tamil-serif); }
 .welcome-banner__name {
   color: var(--c-gold-light);
+  font-weight: 600;
   letter-spacing: var(--ls-wide);
 }
 .welcome-banner__cta {
-  color: var(--c-cream);
+  color: var(--c-ink-on-dark);
   text-decoration: underline;
   text-decoration-color: var(--c-gold);
+  text-underline-offset: 3px;
 }
 .welcome-banner__cta:hover { color: var(--c-gold-light); }
 
-/* -------- Footer -------- */
-.site-footer {
-  margin-top: var(--sp-10);
-  background: linear-gradient(180deg, var(--c-cream) 0%, var(--c-cream-warm) 100%);
-  border-top: 1px solid var(--c-line);
-  padding: var(--sp-7) 0 var(--sp-6);
-  color: var(--c-ink-soft);
-}
-.site-footer__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-5);
-  flex-wrap: wrap;
-}
-.site-footer__brand { display: flex; align-items: center; gap: var(--sp-4); }
-.site-footer__monogram {
-  font-family: var(--ff-serif);
-  font-size: var(--fs-600);
-  color: var(--c-red);
-  letter-spacing: var(--ls-wide);
-}
-.site-footer__monogram span { color: var(--c-gold-dark); font-style: italic; font-size: 0.85em; margin: 0 2px; }
-.site-footer__tagline { margin: 0; font-style: italic; font-size: var(--fs-200); }
-.site-footer__meta { text-align: right; font-size: var(--fs-200); }
-.site-footer__meta p { margin: 0; }
-@media (max-width: 600px) {
-  .site-footer__inner { flex-direction: column; text-align: center; }
-  .site-footer__meta { text-align: center; }
-}
-
-/* Page section spacing */
-.section {
-  padding: var(--sp-8) 0;
-}
-.section--lg { padding: var(--sp-10) 0; }
+/* -------- Section rhythm -------- */
+.section    { padding: var(--sp-section) 0; }
+.section--lg { padding: var(--sp-section-lg) 0; }
 .section--sm { padding: var(--sp-6) 0; }
 
 .section__title {
@@ -218,6 +235,7 @@
   text-align: center;
   font-family: var(--ff-sans);
   font-size: var(--fs-200);
+  font-weight: 600;                /* unified micro-cap weight across all eyebrows */
   letter-spacing: var(--ls-wider);
   text-transform: uppercase;
   color: var(--c-gold-dark);
@@ -231,5 +249,96 @@
   color: var(--c-ink-soft);
 }
 
+/* -------- Cinematic deep-maroon band ----------------------------------------
+   Full-bleed maroon surface; the inner .container keeps content gridded.
+   Cream body (~10.9:1), gold-light headings (~7.4:1), gold hairlines, and a
+   gold-light focus ring so interactive states survive on the dark ground. */
+.section--band {
+  position: relative;
+  background: var(--grad-band);
+  color: var(--c-ink-on-dark);
+  --c-focus: var(--c-focus-on-dark);
+}
+/* Default cinematic padding for a bare band; .section / --sm / --lg modifiers
+   (real classes) win over this zero-specificity rule when also present. */
+:where(.section--band) { padding-block: var(--sp-section); }
+
+/* Gold-foil zari thread along the top edge (a toran motif div, if the markup
+   supplies one, hangs above this in motifs.css). */
+.section--band::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--c-gold-foil);
+  pointer-events: none;
+}
+.section--band :is(h1, h2, h3, h4, h5),
+.section--band .section__title,
+.section--band .section__eyebrow {
+  color: var(--c-gold-light);
+}
+.section--band .section__lead { color: var(--c-ink-on-dark); }
+.section--band small { color: rgba(245, 230, 211, 0.82); }
+.section--band hr,
+.section--band .divider { border-color: var(--c-line-on-dark); color: var(--c-line-on-dark); }
+.section--band a:not(.btn) {
+  color: var(--c-gold-light);
+  text-decoration-color: var(--c-line-on-dark);
+}
+.section--band a:not(.btn):hover {
+  color: var(--c-cream);
+  text-decoration-color: var(--c-gold);
+}
+
+/* -------- Footer (closing deep-maroon band) -------- */
+.site-footer {
+  position: relative;
+  margin-top: var(--sp-section-lg);
+  background: var(--grad-band);
+  color: var(--c-ink-on-dark);
+  border-top: 1px solid var(--c-line-on-dark);
+  padding: var(--sp-section) 0 var(--sp-7);
+  --c-focus: var(--c-focus-on-dark);
+}
+/* Gold-foil closing thread along the very top edge */
+.site-footer::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--c-gold-foil);
+  pointer-events: none;
+}
+.site-footer__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-5);
+  flex-wrap: wrap;
+}
+.site-footer__brand { display: flex; align-items: center; gap: var(--sp-4); }
+.site-footer__monogram {
+  font-family: var(--ff-serif);
+  font-size: var(--fs-600);
+  font-weight: 600;
+  color: var(--c-gold-light);
+  letter-spacing: var(--ls-wide);
+  line-height: 1;
+}
+.site-footer__monogram span { color: var(--c-gold); font-style: italic; font-size: 0.82em; margin: 0 2px; }
+.site-footer__tagline { margin: 0; font-style: italic; font-size: var(--fs-200); color: var(--c-ink-on-dark); }
+.site-footer__tagline [lang="ta"] { font-family: var(--ff-tamil-serif); font-style: normal; color: var(--c-gold-light); }
+.site-footer__meta { text-align: right; font-size: var(--fs-200); color: var(--c-ink-on-dark); }
+.site-footer__meta p { margin: 0; }
+.site-footer small { color: rgba(245, 230, 211, 0.82); }
+.site-footer a { color: var(--c-gold-light); text-decoration-color: var(--c-line-on-dark); }
+.site-footer a:hover { color: var(--c-cream); }
+@media (max-width: 600px) {
+  .site-footer__inner { flex-direction: column; text-align: center; }
+  .site-footer__meta { text-align: center; }
+}
+
+/* -------- View transition -------- */
 .view { animation: fadeIn 300ms var(--ease-out); }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: none;} }
