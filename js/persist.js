@@ -1,6 +1,21 @@
-/* RSVP persistence — localStorage now, backend webhook later */
+/* RSVP persistence — localStorage always, plus an optional backend webhook.
 
-const BACKEND_URL = '';  // production: paste Google Apps Script web-app URL here
+   The backend URL lives in data/config.json (key "rsvp_backend_url"), not in
+   code, so it can be set without a code edit and stays out of the bundle logic.
+   Empty / missing URL => local-only mode (drafts + submissions still persist in
+   the browser; nothing is sent anywhere). Set it to the deployed Google Apps
+   Script /exec URL to go live (see docs/PRODUCTION.md). */
+
+let _backendUrlPromise = null;
+function backendUrl() {
+  if (_backendUrlPromise === null) {
+    _backendUrlPromise = fetch('data/config.json', { cache: 'no-cache' })
+      .then(r => (r.ok ? r.json() : {}))
+      .then(c => (c && typeof c.rsvp_backend_url === 'string' ? c.rsvp_backend_url.trim() : ''))
+      .catch(() => '');
+  }
+  return _backendUrlPromise;
+}
 
 const KEY_PREFIX = 'rsvp:';
 const DRAFT_PREFIX = 'rsvp-draft:';
@@ -46,12 +61,13 @@ export async function submitRSVP(payload) {
     clearDraft(payload.invite_code);
   } catch (e) { console.warn('local save failed', e); }
 
-  if (!BACKEND_URL) {
+  const url = await backendUrl();
+  if (!url) {
     return { ok: true, mode: 'local-only' };
   }
 
   try {
-    const res = await fetch(BACKEND_URL, {
+    const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload)
@@ -73,7 +89,8 @@ function queuePendingSync(payload) {
 }
 
 export async function drainPendingSyncs() {
-  if (!BACKEND_URL) return { drained: 0 };
+  const url = await backendUrl();
+  if (!url) return { drained: 0 };
   let q = [];
   try { q = JSON.parse(localStorage.getItem(PENDING_KEY) || '[]'); } catch {}
   if (!q.length) return { drained: 0 };
@@ -81,7 +98,7 @@ export async function drainPendingSyncs() {
   const remaining = [];
   for (const payload of q) {
     try {
-      const res = await fetch(BACKEND_URL, {
+      const res = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)

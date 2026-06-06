@@ -25,26 +25,34 @@ Apps Script wins because: it's owned by us, it's free for our volume, the Sheet 
 ## 1. Create the Google Sheet
 
 1. Go to **sheets.google.com** → New blank sheet → name it `Shivanie & Theo RSVPs`.
-2. Create **three tabs** (rename `Sheet1` and add two more):
+2. You don't need to create any columns by hand. The **`Submissions`** tab and its header row are **created automatically on the first RSVP** by the script. The `Parties` and `Live` tabs below are **optional**.
 
-### Tab 1 — `Submissions` (raw inbox; append-only)
+### Tab 1 — `Submissions` (auto-created; append-only history)
 
-| Column | Header | Example |
+For reference, the script writes these columns (one row per submit; latest wins in `doGet`):
+
+| # | Header | Example |
 |---|---|---|
-| A | `submitted_at` | `2026-11-02T18:44:12+02:00` |
+| A | `submitted_at` | `2026-11-02T18:44:12.000Z` |
 | B | `invite_code` | `K7M2QH` |
-| C | `party_name` | `Naidoo family` |
-| D | `submitted_by` | `Priya Naidoo` |
-| E | `mehendi_yes` | `2` |
-| F | `nalangu_yes` | `3` |
-| G | `ceremony_yes` | `3` |
-| H | `dietary_summary` | `Priya: no nuts; Anjali: vegetarian` |
-| I | `message_to_couple` | `Can't wait!` |
-| J | `song_request` | `Why This Kolaveri Di` |
-| K | `payload_json` | `{...full JSON for audit trail...}` |
-| L | `user_agent` | `Mozilla/5.0 ...` |
+| C | `party_name` | `The Naidoo Family` |
+| D | `invited_count` | `4` |
+| E | `mehendi_status` | `no` |
+| F | `mehendi_count` | `0` |
+| G | `nalangu_status` | `yes` |
+| H | `nalangu_count` | `3` |
+| I | `ceremony_status` | `yes` |
+| J | `ceremony_count` | `4` |
+| K | `peak_headcount` | `4` |
+| L | `dietary_summary` | `nalangu: vegetarian` |
+| M | `song_requests` | `Why This Kolaveri Di` |
+| N | `notes` | `ceremony: wheelchair ramp at the lawn` |
+| O | `payload_json` | `{...full JSON audit trail...}` |
+| P | `user_agent` | `Mozilla/5.0 ...` |
 
-### Tab 2 — `Parties` (the master guest list, mirrored from `data/guests.json`)
+### Tab 2 — `Parties` — OPTIONAL (junk rejection)
+
+Add this tab only if you want the backend to **reject submissions from codes not on your guest list**. If the tab exists and has rows, the script checks the posted `invite_code` against **column A** and rejects unknown ones; if the tab is absent or empty, all submissions are accepted (the client already gated entry by decrypting the invite). Mirror it from `data/guests.json`:
 
 | Column | Header | Example |
 |---|---|---|
@@ -59,9 +67,9 @@ Apps Script wins because: it's owned by us, it's free for our volume, the Sheet 
 
 You can paste this in by hand or generate it from `data/guests.json` using a simple `node` one-liner. Apps Script validates against column A on submit.
 
-### Tab 3 — `Live` (formula-driven roll-up; what `/admin/` reads)
+### Tab 3 — `Live` — OPTIONAL (not required)
 
-This is a *computed* view. Suggested formulas (row 2 of each column, fill down):
+You can skip this entirely: the `doGet` endpoint already computes a latest-per-code roll-up directly from `Submissions`. Only build this tab if you'd also like a formula-driven view inside the Sheet itself. Suggested formulas (row 2 of each column, fill down):
 
 - A: `=Parties!A2` (invite_code)
 - B: `=Parties!B2` (party_name)
@@ -78,7 +86,7 @@ This is a *computed* view. Suggested formulas (row 2 of each column, fill down):
 
 1. In the Sheet → **Extensions** → **Apps Script**. A new tab opens.
 2. Delete the placeholder `myFunction`.
-3. Paste the full `Code.gs` below.
+3. Paste the **entire contents of [`tools/apps-script/Code.gs`](../tools/apps-script/Code.gs)** — that is the maintained, payload-correct source (it matches the `events`-map the site actually sends and auto-creates the `Submissions` tab + headers on first submit). The block reproduced below is kept only for reference.
 4. Click **Deploy** → **New deployment** → cog → **Web app**.
 5. Description: `RSVP receiver v1`.
 6. Execute as: **Me (your-email@gmail.com)**.
@@ -88,74 +96,91 @@ This is a *computed* view. Suggested formulas (row 2 of each column, fill down):
 ### `Code.gs` — full source
 
 ```javascript
-// Shivanie & Theo wedding — RSVP receiver
-// Receives RSVP POSTs from the website, appends to "Submissions" tab,
-// serves the "Live" tab as JSON for the admin dashboard.
+// Shivanie & Theo wedding — RSVP receiver (Google Apps Script Web App)
+// Matches the REAL client payload (events MAP) from js/views/rsvp.js -> js/persist.js.
+// Authoritative copy: tools/apps-script/Code.gs — paste THAT, not anything older.
 
 const SHEET_SUBMISSIONS = 'Submissions';
-const SHEET_PARTIES     = 'Parties';
-const SHEET_LIVE        = 'Live';
+const SHEET_PARTIES     = 'Parties';   // optional master code list (column A = invite_code)
+const EVENTS            = ['mehendi', 'nalangu', 'ceremony'];
+
+const HEADERS = [
+  'submitted_at', 'invite_code', 'party_name', 'invited_count',
+  'mehendi_status', 'mehendi_count',
+  'nalangu_status', 'nalangu_count',
+  'ceremony_status', 'ceremony_count',
+  'peak_headcount', 'dietary_summary', 'song_requests', 'notes',
+  'payload_json', 'user_agent'
+];
 
 function doPost(e) {
   try {
-    const payload = JSON.parse(e.postData.contents || '{}');
-    if (!payload.invite_code) return _json({ ok: false, error: 'missing invite_code' });
+    const payload = JSON.parse((e && e.postData && e.postData.contents) || '{}');
+    const code = String(payload.invite_code || '').toUpperCase().trim();
+    if (!code) return _json({ ok: false, error: 'missing invite_code' });
 
-    // Validate code is in the master Parties list
     const ss = SpreadsheetApp.getActive();
+
+    // Optional junk rejection: if a populated Parties tab exists, the code must be on it.
     const parties = ss.getSheetByName(SHEET_PARTIES);
-    const codes = parties.getRange(2, 1, parties.getLastRow() - 1, 1).getValues().flat();
-    if (!codes.includes(payload.invite_code)) {
-      return _json({ ok: false, error: 'unknown invite_code' });
+    if (parties && parties.getLastRow() > 1) {
+      const known = parties.getRange(2, 1, parties.getLastRow() - 1, 1)
+        .getValues().flat().map(c => String(c).toUpperCase().trim());
+      if (known.indexOf(code) === -1) return _json({ ok: false, error: 'unknown invite_code' });
     }
 
-    // Compute per-event yes counts
-    const responses = Array.isArray(payload.responses) ? payload.responses : [];
-    const yes = (eventId) => responses.filter(r => r.attending && r.attending[eventId]).length;
-    const dietary = responses
-      .filter(r => r.dietary && String(r.dietary).trim())
-      .map(r => `${r.first_name}: ${String(r.dietary).trim()}`)
-      .join('; ');
+    const ev = payload.events || {};
+    const statusOf = id => (ev[id] ? (ev[id].status || 'pending') : '-');
+    const countOf  = id => (ev[id] && ev[id].status === 'yes' ? (Number(ev[id].attending_count) || 0) : 0);
+    const peak     = EVENTS.reduce((m, id) => Math.max(m, countOf(id)), 0);
 
-    const submissions = ss.getSheetByName(SHEET_SUBMISSIONS);
-    submissions.appendRow([
-      payload._submitted_at || new Date().toISOString(),
-      payload.invite_code,
-      payload.party_name || '',
-      payload.submitted_by || '',
-      yes('mehendi'),
-      yes('nalangu'),
-      yes('ceremony'),
-      dietary,
-      payload.message_to_couple || '',
-      payload.song_request || '',
-      JSON.stringify(payload),
-      payload._client || ''
+    const dietary = EVENTS
+      .filter(id => ev[id] && ev[id].status === 'yes' && ev[id].dietary && ev[id].dietary !== 'none')
+      .map(id => id + ': ' + ev[id].dietary).join('; ');
+    const songs = EVENTS
+      .filter(id => ev[id] && String(ev[id].song_request || '').trim())
+      .map(id => String(ev[id].song_request).trim()).join(' | ');
+    const notes = EVENTS
+      .filter(id => ev[id] && String(ev[id].special_notes || '').trim())
+      .map(id => id + ': ' + String(ev[id].special_notes).trim()).join(' | ');
+
+    _sheetWithHeaders(ss, SHEET_SUBMISSIONS).appendRow([
+      payload._submitted_at || payload.submitted_at || new Date().toISOString(),
+      code, payload.party_name || '', Number(payload.invited_count) || '',
+      statusOf('mehendi'),  countOf('mehendi'),
+      statusOf('nalangu'),  countOf('nalangu'),
+      statusOf('ceremony'), countOf('ceremony'),
+      peak, dietary, songs, notes,
+      JSON.stringify(payload), payload._client || ''
     ]);
 
-    return _json({ ok: true });
+    return _json({ ok: true, received: code });
   } catch (err) {
     return _json({ ok: false, error: String(err) });
   }
 }
 
-function doGet(e) {
-  // Serves the Live tab as JSON (used by /admin/).
-  // No auth — passphrase gating is client-side in /admin/.
-  // Optional: require a shared secret in ?key=... and compare against PropertiesService.
-  const ss = SpreadsheetApp.getActive();
-  const live = ss.getSheetByName(SHEET_LIVE);
-  if (!live) return _json({ ok: false, error: 'no Live tab' });
-  const values = live.getDataRange().getValues();
-  const [headers, ...rows] = values;
-  const out = rows.map(r => Object.fromEntries(headers.map((h, i) => [h, r[i]])));
-  return _json({ ok: true, rows: out, generated_at: new Date().toISOString() });
+function doGet() {
+  try {
+    const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_SUBMISSIONS);
+    if (!sheet || sheet.getLastRow() < 2) return _json({ ok: true, rows: [], generated_at: new Date().toISOString() });
+    const values = sheet.getDataRange().getValues();
+    const headers = values.shift();
+    const byCode = {};
+    values.forEach(r => { const o = {}; headers.forEach((h, i) => o[h] = r[i]); byCode[o.invite_code] = o; });
+    return _json({ ok: true, rows: Object.keys(byCode).map(k => byCode[k]), generated_at: new Date().toISOString() });
+  } catch (err) { return _json({ ok: false, error: String(err) }); }
+}
+
+function _sheetWithHeaders(ss, name) {
+  let sheet = ss.getSheetByName(name);
+  if (!sheet) sheet = ss.insertSheet(name);
+  if (sheet.getLastRow() === 0) { sheet.appendRow(HEADERS); sheet.setFrozenRows(1); }
+  return sheet;
 }
 
 function _json(obj) {
-  return ContentService
-    .createTextOutput(JSON.stringify(obj))
-    .setMimeType(ContentService.MimeType.JSON);
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
 ```
 
@@ -165,13 +190,13 @@ function _json(obj) {
 
 ## 3. Wire the front-end to the backend
 
-Open `js/persist.js` and set:
+Open `data/config.json` and paste the deployed URL — **no code change needed**:
 
-```javascript
-const BACKEND_URL = 'https://script.google.com/macros/s/AKfy.../exec';
+```json
+{ "rsvp_backend_url": "https://script.google.com/macros/s/AKfy.../exec" }
 ```
 
-Commit, push. Cloudflare Pages will redeploy in ~60 seconds.
+Commit, push. The site redeploys automatically (~30–60 s). Leave it as `""` to stay in local-only mode (drafts and submissions still persist in the browser; nothing is sent anywhere).
 
 Test by submitting an RSVP from the live site. A new row should appear in the `Submissions` tab within a second.
 
@@ -251,7 +276,7 @@ Estimated time: **90 minutes**. Work top to bottom.
 | 6 | Create Google Sheet with 3 tabs (Submissions / Parties / Live) | 10 min |
 | 7 | Paste guest list into `Parties` tab | 5 min |
 | 8 | Paste `Code.gs` into Apps Script, deploy as Web app | 5 min |
-| 9 | Paste deployment URL into `js/persist.js` `BACKEND_URL` | 1 min |
+| 9 | Paste deployment URL into `data/config.json` (`rsvp_backend_url`) | 1 min |
 | 10 | Push, let Cloudflare Pages deploy | 2 min |
 | 11 | Attach custom domain in Pages | 5 min |
 | 12 | (Optional) wire Cloudflare Access for `/admin/*` | 10 min |
