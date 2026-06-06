@@ -38,21 +38,56 @@ export function generateCode(rand = crypto) {
   return prefix + checkCharFor(prefix);
 }
 
-let _cache = null;
+/* Encrypted guest list.
+   The site is a static SPA on a PUBLIC host, so any fetched file is world-readable.
+   We therefore ship data/guests.enc.json — each party's guest-facing fields are
+   AES-GCM-encrypted under a key derived (PBKDF2) from that party's invite code, so
+   the file is opaque without a valid code. We derive the key once for the entered
+   code and trial-decrypt records until the GCM auth tag validates (only the matching
+   party's record will). Regenerate the file with tools/encrypt-guests.mjs. */
 
-export async function loadGuests() {
-  if (_cache) return _cache;
-  const res = await fetch('data/guests.json', { cache: 'no-cache' });
+let _manifest = null;
+
+async function loadManifest() {
+  if (_manifest) return _manifest;
+  const res = await fetch('data/guests.enc.json', { cache: 'no-cache' });
   if (!res.ok) throw new Error('Could not load guest list');
-  _cache = await res.json();
-  return _cache;
+  _manifest = await res.json();
+  return _manifest;
+}
+
+function b64ToBytes(s) {
+  const bin = atob(s);
+  const u = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+  return u;
+}
+
+async function deriveKey(code, salt, iterations) {
+  const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(code), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
+    base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']
+  );
 }
 
 export async function findParty(code) {
   if (!isPlausibleCode(code)) return null;
-  const data = await loadGuests();
   const upper = String(code).toUpperCase().trim();
-  return data.parties.find(p => p.invite_code === upper) || null;
+  let m;
+  try { m = await loadManifest(); } catch { return null; }
+  if (!m || !Array.isArray(m.records)) return null;
+  let key;
+  try { key = await deriveKey(upper, b64ToBytes(m.salt), m.iterations || 250000); }
+  catch { return null; }
+  const dec = new TextDecoder();
+  for (const rec of m.records) {
+    try {
+      const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64ToBytes(rec.iv) }, key, b64ToBytes(rec.ct));
+      return JSON.parse(dec.decode(pt));   // GCM auth guarantees this is the right party for this code
+    } catch { /* wrong record for this key — try the next */ }
+  }
+  return null;
 }
 
 export function getInviteCodeFromUrl() {

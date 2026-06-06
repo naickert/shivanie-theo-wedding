@@ -16,3 +16,8 @@ Thumbs.db
 
 # Local-only test artefacts
 tools/verify-admin.mjs
+
+# Private guest list — the deployed site is PUBLIC, so plaintext must never be
+# committed. Only the encrypted data/guests.enc.json ships. After editing this
+# file, regenerate the encrypted version with: node tools/encrypt-guests.mjs
+data/guests.json

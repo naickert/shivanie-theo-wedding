@@ -36,6 +36,16 @@ Open tools/generate-codes.html directly in your browser.
 
 Paste the guest list (one party per row, with members and events-invited) into the textarea. Click **Generate**. Copy the resulting JSON into `data/guests.json` (back up the file first). Each party gets a unique 6-character Crockford-base32 code with a check character.
 
+### ⚠️ Then encrypt before deploying (the site is hosted publicly)
+
+`data/guests.json` holds private data (names, phone numbers, internal notes, codes) and is **gitignored — never commit it**. The deployed host is public, so any plaintext data file it served would be world-readable. Instead, after every edit run:
+
+```bash
+node tools/encrypt-guests.mjs        # data/guests.json → data/guests.enc.json
+```
+
+This writes `data/guests.enc.json`, where each party's **guest-facing fields only** (name, events invited, count, their own accessibility note) are AES-GCM-encrypted under a PBKDF2 key derived from that party's invite code. Internal fields (contact/WhatsApp, internal notes, category) are dropped entirely. Without a valid code the file is opaque ciphertext; the browser (`js/guests.js`) decrypts only the matching party. **Commit only `data/guests.enc.json`.** Keep `data/guests.json` private and local (it is the source you re-run the encryptor from; the admin dashboard and `tools/preview-link.html` also read it locally).
+
 ---
 
 ## View the admin dashboard
@@ -62,7 +72,8 @@ Passphrase-gated client-side. Shows RSVP totals, party × event grid, and CSV / 
 ├── data/
 │   ├── events.json         Three events
 │   ├── venues.json         Three venues
-│   └── guests.json         Parties + invite codes (kept private)
+│   ├── guests.json         Parties + invite codes — PRIVATE, gitignored, local only
+│   └── guests.enc.json     Encrypted guest list (the only one deployed)
 ├── assets/                 Fonts, icons, motifs, photos
 ├── admin/                  Dashboard
 ├── tools/                  generate-codes.html
