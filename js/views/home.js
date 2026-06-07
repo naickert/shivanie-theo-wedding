@@ -5,6 +5,17 @@ import { loadSubmission } from '../persist.js';
 
 const WEDDING = new Date('2026-12-19T15:00:00+02:00'); // Muhurtham, SAST
 
+// The three celebrations, in order. A guest only sees the ones their party is
+// invited to (events_invited); the site is gated, so a party is always present.
+const EVENT_DEFS = [
+  { id: 'mehendi',  day: 'Day 1 — Thursday',  title: 'Mehendi',               ta: 'மருதாணி', date: '17 December 2026', venue: "Bride's home, Durban", href: '#/events/mehendi',
+    blurb: 'An intimate evening of laughter, song and the slow art of henna being drawn across the bride&rsquo;s hands and feet.' },
+  { id: 'nalangu',  day: 'Day 2 — Friday',    title: 'Nalangu &amp; Sangeeth', ta: 'நலங்கு',  date: '18 December 2026', venue: 'Kendra Hall, Greyville', href: '#/events/nalangu',
+    blurb: 'A night for both families to come together &mdash; first through playful games, then a music &amp; dance night that runs long.' },
+  { id: 'ceremony', day: 'Day 3 — Saturday',  title: 'Wedding &amp; Reception', ta: 'திருமணம்', date: '19 December 2026', venue: 'Maroupi, Umhlali', href: '#/events/ceremony', feature: true,
+    blurb: 'The wedding itself &mdash; a sacred one-hour Tamil ceremony beneath a flower-laden <em>mandap</em>, followed by feast and dance.' },
+];
+
 function daysUntil(d) {
   const ms = d.getTime() - Date.now();
   if (ms <= 0) return null;
@@ -20,6 +31,12 @@ export async function render(root) {
   const cd = daysUntil(WEDDING);
   const hasInvite = !!party;
   const submission = party ? loadSubmission(party.invite_code) : null;
+
+  // Show only the celebrations this party is invited to (fall back to all if unknown).
+  const invitedIds = (party && Array.isArray(party.events_invited) && party.events_invited.length)
+    ? party.events_invited
+    : EVENT_DEFS.map(e => e.id);
+  const cards = EVENT_DEFS.filter(e => invitedIds.includes(e.id));
 
   root.innerHTML = `
     <section class="hero">
@@ -66,37 +83,7 @@ export async function render(root) {
         <p class="section__lead">After many seasons of finding our way to one another, we are joining our lives in the tradition that has shaped both our families for generations. Please join us for three days of ritual, music and joy.</p>
 
         <div class="grid grid--3" style="margin-top:var(--sp-7)">
-          ${eventCard({
-            day: 'Day 1 — Thursday',
-            title: 'Mehendi',
-            ta: 'மருதாணி',
-            date: '17 December 2026',
-            venue: "Bride's home, Durban",
-            blurb: 'An intimate evening of laughter, song and the slow art of henna being drawn across the bride&rsquo;s hands and feet.',
-            href: '#/events/mehendi',
-            invited: invitedTo(party, 'mehendi')
-          })}
-          ${eventCard({
-            day: 'Day 2 — Friday',
-            title: 'Nalangu &amp; Sangeeth',
-            ta: 'நலங்கு',
-            date: '18 December 2026',
-            venue: 'Kendra Hall, Greyville',
-            blurb: 'A night for both families to come together &mdash; first through playful games, then a music &amp; dance night that runs long.',
-            href: '#/events/nalangu',
-            invited: invitedTo(party, 'nalangu')
-          })}
-          ${eventCard({
-            day: 'Day 3 — Saturday',
-            title: 'Wedding &amp; Reception',
-            ta: 'திருமணம்',
-            date: '19 December 2026',
-            venue: 'Maroupi, Umhlali',
-            blurb: 'The wedding itself &mdash; a sacred one-hour Tamil ceremony beneath a flower-laden <em>mandap</em>, followed by feast and dance.',
-            href: '#/events/ceremony',
-            invited: invitedTo(party, 'ceremony'),
-            feature: true
-          })}
+          ${cards.map(eventCard).join('')}
         </div>
       </div>
     </section>
@@ -116,25 +103,20 @@ export async function render(root) {
   if (cd) tickCountdown(root);
 }
 
-function eventCard({ day, title, ta, date, venue, blurb, href, invited, feature }) {
+function eventCard({ day, title, ta, date, venue, blurb, href, feature }) {
   // Co-equal display Tamil: gold-dark is AA on cream (~4.6:1); on the maroon
   // feature card it flips to gold-light to stay AA (~7.4:1) against --grad-band.
   const taColor = feature ? 'var(--c-gold-light)' : 'var(--c-gold-dark)';
   return `
     <article class="event-card${feature ? ' event-card--feature' : ''}">
       <div class="event-card__motif" aria-hidden="true"></div>
-      <p class="event-card__day">${day} ${invited === true ? '<span class="badge badge--invited" style="margin-left:.5em">You&rsquo;re invited</span>' : ''}</p>
+      <p class="event-card__day">${day}</p>
       <h3 class="event-card__title">${title} <span lang="ta" style="font-family:var(--ff-tamil-serif);font-size:.85em;color:${taColor}">${ta}</span></h3>
       <p class="event-card__date">${date}</p>
       <p class="event-card__venue">${venue}</p>
       <p class="event-card__blurb">${blurb}</p>
       <a class="event-card__link" href="${href}">Read more &rsaquo;</a>
     </article>`;
-}
-
-function invitedTo(party, eventId) {
-  if (!party) return null;
-  return Array.isArray(party.events_invited) && party.events_invited.includes(eventId);
 }
 
 let tickHandle = null;
