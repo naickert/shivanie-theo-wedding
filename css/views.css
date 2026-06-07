@@ -207,6 +207,23 @@
   padding: var(--sp-section) 0;
 }
 
+/* Event-card grid — flex so it stays CENTRED for any number of cards (a guest
+   invited to 2 events shouldn't see a lopsided gap where the 3rd would be). */
+.events-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: var(--sp-5);
+}
+.events-grid > * {
+  flex: 1 1 18rem;
+  max-width: 24rem;
+}
+@media (min-width: 992px) {
+  .events-grid { gap: var(--sp-6); }
+}
+
 /* =======================  GATE WRAPPER  ================================== */
 
 /* Centres the not-invited .card--ornate vertically — no dead cream void

@@ -82,7 +82,7 @@ export async function render(root) {
         <h2 class="section__title">The Celebration</h2>
         <p class="section__lead">After many seasons of finding our way to one another, we are joining our lives in the tradition that has shaped both our families for generations. Please join us for a celebration of ritual, music and joy.</p>
 
-        <div class="grid grid--3" style="margin-top:var(--sp-7)">
+        <div class="events-grid" style="margin-top:var(--sp-7)">
           ${cards.map(eventCard).join('')}
         </div>
       </div>

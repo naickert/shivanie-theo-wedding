@@ -29,7 +29,7 @@ export async function render(root) {
           <p class="page-header__lead">A Tamil wedding is not a single afternoon &mdash; it is a slow gathering of family across several days, each with its own rituals, its own dress code, and its own kind of joy. Here is the shape of ours.</p>
         </header>
 
-        <div class="grid grid--3" style="margin-top:var(--sp-7)">
+        <div class="events-grid" style="margin-top:var(--sp-7)">
           ${cards.map(eventCard).join('')}
         </div>
 
