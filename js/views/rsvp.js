@@ -95,7 +95,7 @@ export async function render(root) {
         <span class="page-header__eyebrow">RSVP</span>
         <h1 class="page-header__title">We can&rsquo;t wait to celebrate with you</h1>
         <p class="page-header__lead">
-          Because each of our three days has a different feel &mdash; some intimate, some big and loud &mdash;
+          Because each of our celebrations has a different feel &mdash; some intimate, some big and loud &mdash;
           please RSVP per event. You can update your responses any time before
           <strong>31 October 2026</strong> by returning to this same link.
         </p>

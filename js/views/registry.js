@@ -13,7 +13,7 @@ export async function render(root) {
         <div class="grid grid--2" style="margin-top:var(--sp-6)">
           <article class="card card--ornate">
             <h2 style="color:var(--c-red); margin-top:0">Your presence is the gift</h2>
-            <p>Many of you are travelling some distance to share these three days with us &mdash; from across Durban, across South Africa, and from much further afield. That, on its own, is the most generous thing anyone could do.</p>
+            <p>Many of you are travelling some distance to share these celebrations with us &mdash; from across Durban, across South Africa, and from much further afield. That, on its own, is the most generous thing anyone could do.</p>
             <p>We mean it sincerely: no obligation, no expectation. Just bring yourselves.</p>
           </article>
 

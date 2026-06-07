@@ -116,21 +116,21 @@ const ICS_EVENT_TIMES = {
     end_utc:   '20261217T160000Z', // 18:00 SAST
     title:     'Mehendi — Shivanie & Theo',
     location:  "Bride's home, Durban",
-    desc:      'An intimate evening of henna, song and family. Day 1 of 3.'
+    desc:      'An intimate evening of henna, song and family.'
   },
   nalangu: {
     start_utc: '20261218T150000Z', // 17:00 SAST
     end_utc:   '20261218T230000Z', // 01:00 SAST next day
     title:     'Nalangu & Sangeeth — Shivanie & Theo',
     location:  'Kendra Hall, 5 John Zikhali Road, Greyville, Durban',
-    desc:      'A night for both families — playful games, then music and dance. Day 2 of 3.'
+    desc:      'A night for both families — playful games, then music and dance.'
   },
   ceremony: {
     start_utc: '20261219T120000Z', // 14:00 SAST
     end_utc:   '20261219T210000Z', // 23:00 SAST
     title:     'Wedding & Reception — Shivanie & Theo',
     location:  'Maroupi Wedding Venue, Umhlali, KZN North Coast',
-    desc:      'The sacred Tamil ceremony beneath the mandap, followed by feast and dance. Day 3 of 3. Ceremony begins promptly at 15:00.'
+    desc:      'The sacred Tamil ceremony beneath the mandap, followed by feast and dance. Ceremony begins promptly at 15:00.'
   }
 };
 

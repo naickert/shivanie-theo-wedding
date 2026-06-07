@@ -4,11 +4,11 @@ import { get as getState } from '../state.js';
 
 // Only the celebrations a party is invited to are shown (the site is gated, so a party always exists).
 const EVENT_DEFS = [
-  { id: 'mehendi',  day: 'Day 1 — Thursday', title: 'Mehendi',               ta: 'மருதாணி', date: '17 December 2026', venue: "Bride's home, Durban", href: '#/events/mehendi',
+  { id: 'mehendi',  day: 'Thursday', title: 'Mehendi',               ta: 'மருதாணி', date: '17 December 2026', venue: "Bride's home, Durban", href: '#/events/mehendi',
     blurb: 'An intimate, female-centred afternoon of song, sweets and the slow art of <em>mehendi</em> (henna) being drawn across the bride&rsquo;s hands and feet. The deeper the colour, the longer the love &mdash; or so the aunties insist.' },
-  { id: 'nalangu',  day: 'Day 2 — Friday',   title: 'Nalangu &amp; Sangeeth', ta: 'நலங்கு',  date: '18 December 2026', venue: 'Kendra Hall, Greyville', href: '#/events/nalangu',
+  { id: 'nalangu',  day: 'Friday',   title: 'Nalangu &amp; Sangeeth', ta: 'நலங்கு',  date: '18 December 2026', venue: 'Kendra Hall, Greyville', href: '#/events/nalangu',
     blurb: 'First, <em>nalangu</em> (family games) &mdash; rolling coconuts, hiding rings in turmeric water, two families teasing each other into one. Then <em>sangeeth</em> &mdash; choreography, surprise performances and a dance floor that doesn&rsquo;t close until very late.' },
-  { id: 'ceremony', day: 'Day 3 — Saturday', title: 'Wedding &amp; Reception', ta: 'திருமணம்', date: '19 December 2026', venue: 'Maroupi, Umhlali', href: '#/events/ceremony',
+  { id: 'ceremony', day: 'Saturday', title: 'Wedding &amp; Reception', ta: 'திருமணம்', date: '19 December 2026', venue: 'Maroupi, Umhlali', href: '#/events/ceremony',
     blurb: 'The wedding itself &mdash; a one-hour Tamil ceremony beneath a flower-laden <em>mandap</em> (sacred canopy) in the Maroupi gardens, with the <em>muhurtham</em> (auspicious moment) at 15:15. Followed by a vegetarian feast and dancing indoors.' },
 ];
 
@@ -24,7 +24,7 @@ export async function render(root) {
     <section class="section">
       <div class="container">
         <header class="page-header">
-          <span class="page-header__eyebrow">Three Days. Three Venues. One Family.</span>
+          <span class="page-header__eyebrow">Two Families, One Celebration</span>
           <h1 class="page-header__title">The Celebration</h1>
           <p class="page-header__lead">A Tamil wedding is not a single afternoon &mdash; it is a slow gathering of family across several days, each with its own rituals, its own dress code, and its own kind of joy. Here is the shape of ours.</p>
         </header>

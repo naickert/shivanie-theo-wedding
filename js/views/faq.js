@@ -13,9 +13,9 @@ export async function render(root) {
         <details class="faq-item">
           <summary>What should I wear to each event?</summary>
           <div class="faq-item__body">
-            <p><strong>Day 1 (Mehendi):</strong> light cottons in festive colours; avoid white and anything you&rsquo;d hate to stain with henna. Flat shoes for floor seating.</p>
-            <p><strong>Day 2 (Nalangu &amp; Sangeeth):</strong> traditional or semi-formal Indian &mdash; sarees, lehengas, kurtas, sherwanis. A formal suit or smart cocktail dress works too. Colour, not black or white.</p>
-            <p><strong>Day 3 (Wedding &amp; Reception):</strong> formal Indian or formal Western. Silks, sarees, sherwanis, suits, formal dresses. Jewel tones photograph beautifully.</p>
+            <p><strong>Mehendi:</strong> light cottons in festive colours; avoid white and anything you&rsquo;d hate to stain with henna. Flat shoes for floor seating.</p>
+            <p><strong>Nalangu &amp; Sangeeth:</strong> traditional or semi-formal Indian &mdash; sarees, lehengas, kurtas, sherwanis. A formal suit or smart cocktail dress works too. Colour, not black or white.</p>
+            <p><strong>Wedding &amp; Reception:</strong> formal Indian or formal Western. Silks, sarees, sherwanis, suits, formal dresses. Jewel tones photograph beautifully.</p>
           </div>
         </details>
 
@@ -66,17 +66,17 @@ export async function render(root) {
 
         <details class="faq-item">
           <summary>What about parking?</summary>
-          <div class="faq-item__body"><strong>Kendra Hall</strong> has on-site and street parking; arrive a touch early on a Friday evening. <strong>Maroupi</strong> has ample on-site parking with a guided arrival lane. For the Day 1 Mehendi at the bride&rsquo;s home, please carpool where possible.</div>
+          <div class="faq-item__body"><strong>Kendra Hall</strong> has on-site and street parking; arrive a touch early on a Friday evening. <strong>Maroupi</strong> has ample on-site parking with a guided arrival lane. For the Mehendi at the bride&rsquo;s home, please carpool where possible.</div>
         </details>
 
         <details class="faq-item">
           <summary>What&rsquo;s the wet-weather plan?</summary>
-          <div class="faq-item__body">Day 3&rsquo;s ceremony is outdoors in the Maroupi gardens, but a fully covered marquee and an indoor pivot are on standby. The ceremony starts on time, rain or shine. The reception is always indoors.</div>
+          <div class="faq-item__body">The ceremony is outdoors in the Maroupi gardens, but a fully covered marquee and an indoor pivot are on standby. The ceremony starts on time, rain or shine. The reception is always indoors.</div>
         </details>
 
         <details class="faq-item">
           <summary>Will there be an open bar?</summary>
-          <div class="faq-item__body">Yes &mdash; open bar at Day 2 (Nalangu &amp; Sangeeth) and Day 3 (Wedding &amp; Reception). Day 1 (Mehendi) is a softer, family afternoon with soft drinks, tea and refreshments.</div>
+          <div class="faq-item__body">Yes &mdash; open bar at the Nalangu &amp; Sangeeth and the Wedding &amp; Reception. The Mehendi is a softer, family afternoon with soft drinks, tea and refreshments.</div>
         </details>
 
         <details class="faq-item">

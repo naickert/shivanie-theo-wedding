@@ -18,8 +18,8 @@ export async function render(root) {
         <h2>Where to Stay</h2>
         <p>Two natural choices, depending on which days you&rsquo;re attending:</p>
         <ul>
-          <li><strong>North Coast</strong> (Umhlali, Ballito, Salt Rock) &mdash; closest to the Day 3 ceremony &amp; reception at Maroupi. Ideal if you&rsquo;re flying in mainly for the wedding day.</li>
-          <li><strong>Central Durban</strong> (Berea, Morningside, Umhlanga) &mdash; closest to the Day 1 Mehendi and Day 2 Nalangu &amp; Sangeeth at Kendra Hall. Ideal if you&rsquo;re joining for all three days.</li>
+          <li><strong>North Coast</strong> (Umhlali, Ballito, Salt Rock) &mdash; closest to the ceremony &amp; reception at Maroupi. Ideal if you&rsquo;re flying in mainly for the wedding day.</li>
+          <li><strong>Central Durban</strong> (Berea, Morningside, Umhlanga) &mdash; closest to the Mehendi and the Nalangu &amp; Sangeeth at Kendra Hall. Ideal if you&rsquo;re joining us for the celebrations.</li>
         </ul>
         <p><em>December is peak season in KZN.</em> Please book your accommodation by August 2026 &mdash; the coast fills up fast.</p>
 

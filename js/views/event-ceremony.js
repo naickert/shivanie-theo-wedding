@@ -10,7 +10,7 @@ export async function render(root) {
     <section class="section">
       <div class="container container--text">
         <header class="page-header">
-          <span class="page-header__eyebrow">Day 3 &middot; Saturday</span>
+          <span class="page-header__eyebrow">Saturday &middot; 19 December</span>
           <h1 class="page-header__title">Wedding &amp; Reception <span lang="ta" style="font-size:.6em;color:var(--c-gold-dark);font-weight:400">திருமணம்</span></h1>
           <p class="page-header__lead">Saturday 19 December 2026</p>
           ${invited ? '<p style="margin-top:var(--sp-3)"><span class="badge badge--invited">You&rsquo;re invited</span></p>' : ''}

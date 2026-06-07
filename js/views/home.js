@@ -8,11 +8,11 @@ const WEDDING = new Date('2026-12-19T15:00:00+02:00'); // Muhurtham, SAST
 // The three celebrations, in order. A guest only sees the ones their party is
 // invited to (events_invited); the site is gated, so a party is always present.
 const EVENT_DEFS = [
-  { id: 'mehendi',  day: 'Day 1 — Thursday',  title: 'Mehendi',               ta: 'மருதாணி', date: '17 December 2026', venue: "Bride's home, Durban", href: '#/events/mehendi',
+  { id: 'mehendi',  day: 'Thursday',  title: 'Mehendi',               ta: 'மருதாணி', date: '17 December 2026', venue: "Bride's home, Durban", href: '#/events/mehendi',
     blurb: 'An intimate evening of laughter, song and the slow art of henna being drawn across the bride&rsquo;s hands and feet.' },
-  { id: 'nalangu',  day: 'Day 2 — Friday',    title: 'Nalangu &amp; Sangeeth', ta: 'நலங்கு',  date: '18 December 2026', venue: 'Kendra Hall, Greyville', href: '#/events/nalangu',
+  { id: 'nalangu',  day: 'Friday',    title: 'Nalangu &amp; Sangeeth', ta: 'நலங்கு',  date: '18 December 2026', venue: 'Kendra Hall, Greyville', href: '#/events/nalangu',
     blurb: 'A night for both families to come together &mdash; first through playful games, then a music &amp; dance night that runs long.' },
-  { id: 'ceremony', day: 'Day 3 — Saturday',  title: 'Wedding &amp; Reception', ta: 'திருமணம்', date: '19 December 2026', venue: 'Maroupi, Umhlali', href: '#/events/ceremony', feature: true,
+  { id: 'ceremony', day: 'Saturday',  title: 'Wedding &amp; Reception', ta: 'திருமணம்', date: '19 December 2026', venue: 'Maroupi, Umhlali', href: '#/events/ceremony', feature: true,
     blurb: 'The wedding itself &mdash; a sacred one-hour Tamil ceremony beneath a flower-laden <em>mandap</em>, followed by feast and dance.' },
 ];
 
@@ -46,7 +46,7 @@ export async function render(root) {
       <div class="feather-wm" aria-hidden="true"></div>
       <div class="container">
         <div class="hero__motif-top" aria-hidden="true"></div>
-        <span class="hero__eyebrow">Save the Date &mdash; 17–19 December 2026</span>
+        <span class="hero__eyebrow">Save the Date &mdash; December 2026</span>
         <h1 class="hero__title">
           <span class="name">Shivanie</span>
           <span class="name-ornament" aria-hidden="true">&amp;</span>
@@ -78,9 +78,9 @@ export async function render(root) {
 
     <section class="three-day">
       <div class="container">
-        <span class="section__eyebrow">Three Days. Three Venues. One Family.</span>
+        <span class="section__eyebrow">Two Families, One Celebration</span>
         <h2 class="section__title">The Celebration</h2>
-        <p class="section__lead">After many seasons of finding our way to one another, we are joining our lives in the tradition that has shaped both our families for generations. Please join us for three days of ritual, music and joy.</p>
+        <p class="section__lead">After many seasons of finding our way to one another, we are joining our lives in the tradition that has shaped both our families for generations. Please join us for a celebration of ritual, music and joy.</p>
 
         <div class="grid grid--3" style="margin-top:var(--sp-7)">
           ${cards.map(eventCard).join('')}

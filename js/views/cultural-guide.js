@@ -77,7 +77,7 @@ export async function render(root) {
         </details>
 
         <p style="margin-top:var(--sp-8); text-align:center">
-          <a href="#/celebration" class="btn">Back to the three days</a>
+          <a href="#/celebration" class="btn">Back to the Celebration</a>
           <a href="#/faq" class="btn btn--outline" style="margin-left:var(--sp-3)">All FAQs</a>
         </p>
       </div>

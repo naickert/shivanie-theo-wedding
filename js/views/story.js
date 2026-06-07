@@ -27,7 +27,7 @@ export async function render(root) {
 
           <section>
             <h2>Why a Tamil Wedding</h2>
-            <p>Both of our families carry the Tamil tradition forward &mdash; through language, through prayer, through the food on our Sunday tables. Choosing a three-day Tamil wedding felt less like a decision and more like a homecoming. We want our marriage to begin the same way our parents&rsquo; and grandparents&rsquo; did: with the <em>mandap</em> (sacred wedding canopy), the <em>nadaswaram</em> (traditional South Indian wind instrument), and every aunty, uncle and cousin in the room.</p>
+            <p>Both of our families carry the Tamil tradition forward &mdash; through language, through prayer, through the food on our Sunday tables. Choosing a traditional Tamil wedding felt less like a decision and more like a homecoming. We want our marriage to begin the same way our parents&rsquo; and grandparents&rsquo; did: with the <em>mandap</em> (sacred wedding canopy), the <em>nadaswaram</em> (traditional South Indian wind instrument), and every aunty, uncle and cousin in the room.</p>
           </section>
 
           <div class="motif-strip" aria-hidden="true"></div>
@@ -39,7 +39,7 @@ export async function render(root) {
         </article>
 
         <p style="margin-top:var(--sp-8); text-align:center">
-          <a href="#/celebration" class="btn">See the three days</a>
+          <a href="#/celebration" class="btn">See the Celebration</a>
         </p>
       </div>
     </section>

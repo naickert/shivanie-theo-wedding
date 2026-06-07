@@ -10,7 +10,7 @@ export async function render(root) {
     <section class="section">
       <div class="container container--text">
         <header class="page-header">
-          <span class="page-header__eyebrow">Day 1 &middot; Thursday</span>
+          <span class="page-header__eyebrow">Thursday &middot; 17 December</span>
           <h1 class="page-header__title">Mehendi <span lang="ta" style="font-size:.6em;color:var(--c-gold-dark);font-weight:400">மருதாணி</span></h1>
           <p class="page-header__lead">Thursday 17 December 2026</p>
           ${invited ? '<p style="margin-top:var(--sp-3)"><span class="badge badge--invited">You&rsquo;re invited</span></p>' : ''}
@@ -82,7 +82,7 @@ export async function render(root) {
 
         <p style="margin-top:var(--sp-7); text-align:center">
           <a href="#/rsvp" class="btn">${party ? 'Update Your RSVP' : 'RSVP'}</a>
-          <a href="#/events/nalangu" class="btn btn--outline" style="margin-left:var(--sp-3)">Day 2 &rsaquo;</a>
+          <a href="#/events/nalangu" class="btn btn--outline" style="margin-left:var(--sp-3)">Nalangu &amp; Sangeeth &rsaquo;</a>
         </p>
       </div>
     </section>
