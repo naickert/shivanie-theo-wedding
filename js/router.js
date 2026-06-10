@@ -13,11 +13,15 @@ export function setNotFound(handler) { notFound = handler; }
 
 export function beforeEach(fn) { beforeEachFn = fn; }
 
-export function navigate(path) {
+export function navigate(path, opts = {}) {
   if (path.startsWith('#')) path = path.slice(1);
   if (!path) path = '/';
   if (location.hash === '#' + path) {
     handle(); // re-render
+  } else if (opts.replace) {
+    // No new history entry — used by guard redirects so the back button
+    // doesn't bounce the visitor straight back into the redirect.
+    location.replace('#' + path);
   } else {
     location.hash = '#' + path;
   }
@@ -76,7 +80,7 @@ async function handle() {
       else el.removeAttribute('aria-current');
     });
     document.getElementById('main')?.focus({ preventScroll: false });
-    window.scrollTo({ top: 0, behavior: 'instant' in window ? 'instant' : 'auto' });
+    window.scrollTo({ top: 0, behavior: 'auto' });
   } catch (e) {
     console.error('Route handler error', e);
     document.getElementById('view').innerHTML = `<div class="container section"><div class="notice notice--error">Something went wrong rendering this page. Please reload.</div></div>`;

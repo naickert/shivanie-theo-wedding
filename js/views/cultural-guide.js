@@ -69,7 +69,7 @@ export async function render(root) {
         </details>
         <details class="faq-item">
           <summary>Is alcohol served?</summary>
-          <div class="faq-item__body">No alcohol during the ceremony itself, which is a sacred ritual. An open bar runs at the Friday Sangeeth and at the Saturday reception.</div>
+          <div class="faq-item__body">No alcohol during the ceremony itself, which is a sacred ritual. There will be a bar at the Saturday reception; bar arrangements for the Friday Sangeeth are being finalised.</div>
         </details>
         <details class="faq-item">
           <summary>How long is the ceremony?</summary>

@@ -1,7 +1,7 @@
 /* Thank-you view — confirmation summary, calendar exports, share-with-family. */
 
 import { get as getState } from '../state.js';
-import { loadSubmission } from '../persist.js';
+import { loadSubmission, hasPendingSync } from '../persist.js';
 import {
   buildSummaryText, buildWhatsAppUrl, copyToClipboard,
   buildIcsForEvents, downloadIcs
@@ -15,6 +15,16 @@ async function loadEvents() {
   const json = await res.json();
   _events = json.events;
   return _events;
+}
+
+let _config = null;
+async function loadConfig() {
+  if (_config) return _config;
+  try {
+    const res = await fetch('data/config.json', { cache: 'no-cache' });
+    _config = res.ok ? await res.json() : {};
+  } catch { _config = {}; }
+  return _config;
 }
 
 function escHtml(s) {
@@ -54,6 +64,7 @@ export async function render(root) {
   let events;
   try { events = await loadEvents(); }
   catch { events = []; }
+  const config = await loadConfig();
 
   const evMap = new Map(events.map(e => [e.id, e]));
   const evIds = Object.keys(payload.events || {});
@@ -61,18 +72,38 @@ export async function render(root) {
 
   const inviteLink = buildInviteLink(payload.invite_code);
 
+  // Honest delivery status: the send failed just now, or an earlier
+  // submission is still queued on this device waiting for a connection.
+  const sendResult = state.rsvp_send_result;
+  const isPending = (sendResult && sendResult.ok === false) || hasPendingSync(payload.invite_code);
+
   root.innerHTML = `
     <section class="section">
       <div class="page-header container container--text">
-        <span class="page-header__eyebrow">RSVP received</span>
+        <span class="page-header__eyebrow">${isPending ? 'RSVP saved' : 'RSVP received'}</span>
         <h1 class="page-header__title">Thank you, ${escHtml(payload.party_name || 'friend')}</h1>
         <p class="page-header__lead">
-          We&rsquo;ve recorded your responses. We&rsquo;ll be in touch closer to the date with timings,
+          ${isPending
+            ? 'Your responses are saved on this device.'
+            : 'We&rsquo;ve recorded your responses.'} We&rsquo;ll be in touch closer to the date with timings,
           arrival details and anything else you need. <span lang="ta">நன்றி &mdash;</span> thank you for celebrating with us.
         </p>
       </div>
 
       <div class="container container--narrow">
+        ${isPending ? `
+          <div class="notice notice--warning" role="status" aria-live="polite" style="margin-bottom:var(--sp-5)">
+            <div>
+              <strong>One more step needed.</strong>
+              <p style="margin:.25em 0 0">
+                We couldn&rsquo;t reach our RSVP service just now &mdash; you may be offline. Your responses are
+                safely saved on this device and will be sent automatically the next time you open your
+                invitation link with an internet connection. If you don&rsquo;t hear from us, please send
+                Shivanie or Theo a quick WhatsApp to confirm.
+              </p>
+            </div>
+          </div>
+        ` : ''}
         <div class="rsvp-summary" aria-live="polite">
           <h3>Your responses</h3>
           ${evIds.map(id => renderSummaryRow(id, evMap.get(id), payload.events[id])).join('')}
@@ -99,10 +130,11 @@ export async function render(root) {
         </p>
         <div style="display:grid; gap:var(--sp-3); max-width:32rem; margin:var(--sp-4) auto 0;">
           <button type="button" class="btn" id="copy-link-btn">Copy invitation link</button>
-          <a class="btn btn--outline" id="wa-send-btn" href="#" target="_blank" rel="noopener">
-            Send summary on WhatsApp
-          </a>
-          <!-- TODO: replace with Theo's WhatsApp number -->
+          ${config.couple_whatsapp ? `
+            <a class="btn btn--outline" id="wa-send-btn" href="#" target="_blank" rel="noopener">
+              Send summary on WhatsApp
+            </a>
+          ` : ''}
         </div>
         <p id="share-feedback" class="field__hint" style="text-align:center; margin-top:var(--sp-3);" aria-live="polite"></p>
 
@@ -113,7 +145,7 @@ export async function render(root) {
     </section>
   `;
 
-  wire(root, payload, events, acceptedIds, party, inviteLink);
+  wire(root, payload, events, acceptedIds, party, inviteLink, config);
 }
 
 function renderSummaryRow(id, ev, r) {
@@ -164,20 +196,20 @@ function flashFeedback(root, msg) {
   setTimeout(() => { if (el) el.textContent = ''; }, 2500);
 }
 
-function wire(root, payload, events, acceptedIds, party, inviteLink) {
+function wire(root, payload, events, acceptedIds, party, inviteLink, config) {
   // Calendar buttons
   root.querySelectorAll('[data-cal]').forEach(btn => {
     btn.addEventListener('click', () => {
       const which = btn.getAttribute('data-cal');
       const ids = (which === 'all') ? acceptedIds : [which];
-      // Pass party_name + count summary as the attendee descriptor
+      // Per-event attendee descriptor — counts can differ between events
       const peopleWord = n => n === 1 ? 'person' : 'people';
-      const partySummary = ids.map(id => {
+      const attendingByEvent = {};
+      for (const id of ids) {
         const c = payload.events?.[id]?.attending_count || 0;
-        return c ? `${c} ${peopleWord(c)}` : '';
-      }).filter(Boolean);
-      const allAttending = partySummary.length ? [payload.party_name + ` (${partySummary[0]})`] : [payload.party_name];
-      const ics = buildIcsForEvents(ids, party || { invite_code: payload.invite_code, party_name: payload.party_name }, allAttending);
+        attendingByEvent[id] = [c ? `${payload.party_name} (${c} ${peopleWord(c)})` : payload.party_name];
+      }
+      const ics = buildIcsForEvents(ids, party || { invite_code: payload.invite_code, party_name: payload.party_name }, attendingByEvent);
       const fname = ids.length === 1
         ? `theo-shivanie-${ids[0]}.ics`
         : `theo-shivanie-wedding.ics`;
@@ -191,11 +223,11 @@ function wire(root, payload, events, acceptedIds, party, inviteLink) {
     flashFeedback(root, ok ? 'Invitation link copied to clipboard' : 'Could not copy — please copy manually from the address bar.');
   });
 
-  // WhatsApp button — opens wa.me to couple's number with summary
+  // WhatsApp button — opens wa.me to the couple's number (data/config.json ->
+  // "couple_whatsapp"). The button is only rendered when the number is set.
   const wa = root.querySelector('#wa-send-btn');
-  if (wa) {
+  if (wa && config?.couple_whatsapp) {
     const text = buildSummaryText(payload, events) + `\nInvite link: ${inviteLink}`;
-    // TODO: replace +27000000000 with Theo's actual WhatsApp number
-    wa.href = buildWhatsAppUrl('+27000000000', text);
+    wa.href = buildWhatsAppUrl(config.couple_whatsapp, text);
   }
 }

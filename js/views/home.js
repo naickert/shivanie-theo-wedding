@@ -9,7 +9,7 @@ const WEDDING = new Date('2026-12-19T15:00:00+02:00'); // Muhurtham, SAST
 // invited to (events_invited); the site is gated, so a party is always present.
 const EVENT_DEFS = [
   { id: 'mehendi',  day: 'Thursday',  title: 'Mehendi',               ta: 'மருதாணி', date: '17 December 2026', venue: "Bride's home, Durban", href: '#/events/mehendi',
-    blurb: 'An intimate evening of laughter, song and the slow art of henna being drawn across the bride&rsquo;s hands and feet.' },
+    blurb: 'An intimate day of laughter, song and the slow art of henna being drawn across the bride&rsquo;s hands and feet.' },
   { id: 'nalangu',  day: 'Friday',    title: 'Nalangu &amp; Sangeeth', ta: 'நலங்கு',  date: '18 December 2026', venue: 'Kendra Hall, Greyville', href: '#/events/nalangu',
     blurb: 'A night for both families to come together &mdash; first through playful games, then a music &amp; dance night that runs long.' },
   { id: 'ceremony', day: 'Saturday',  title: 'Wedding &amp; Reception', ta: 'திருமணம்', date: '19 December 2026', venue: 'Maroupi, Umhlali', href: '#/events/ceremony', feature: true,

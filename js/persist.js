@@ -6,15 +6,20 @@
    the browser; nothing is sent anywhere). Set it to the deployed Google Apps
    Script /exec URL to go live (see docs/PRODUCTION.md). */
 
-let _backendUrlPromise = null;
-function backendUrl() {
-  if (_backendUrlPromise === null) {
-    _backendUrlPromise = fetch('data/config.json', { cache: 'no-cache' })
-      .then(r => (r.ok ? r.json() : {}))
-      .then(c => (c && typeof c.rsvp_backend_url === 'string' ? c.rsvp_backend_url.trim() : ''))
-      .catch(() => '');
+let _backendUrl = '';
+async function backendUrl() {
+  // Only cache a successful lookup — a transient failure (flaky connection at
+  // page load) must not lock the whole session into local-only mode.
+  if (_backendUrl) return _backendUrl;
+  try {
+    const r = await fetch('data/config.json', { cache: 'no-cache' });
+    const c = r.ok ? await r.json() : {};
+    const url = c && typeof c.rsvp_backend_url === 'string' ? c.rsvp_backend_url.trim() : '';
+    if (url) _backendUrl = url;
+    return url;
+  } catch {
+    return '';
   }
-  return _backendUrlPromise;
 }
 
 const KEY_PREFIX = 'rsvp:';
@@ -63,7 +68,10 @@ export async function submitRSVP(payload) {
 
   const url = await backendUrl();
   if (!url) {
-    return { ok: true, mode: 'local-only' };
+    // Offline or config unreachable — queue so it sends on the next visit,
+    // and report honestly so the UI can tell the guest it's still pending.
+    queuePendingSync(payload);
+    return { ok: false, mode: 'queued', error: 'backend unreachable' };
   }
 
   try {
@@ -73,10 +81,25 @@ export async function submitRSVP(payload) {
       body: JSON.stringify(payload)
     });
     const json = await res.json().catch(() => ({}));
-    return { ok: res.ok, ...json, mode: 'live' };
+    if (!res.ok || json.ok === false) {
+      queuePendingSync(payload);
+      return { ok: false, mode: 'queued', error: json.error || `HTTP ${res.status}` };
+    }
+    return { ok: true, ...json, mode: 'live' };
   } catch (err) {
     queuePendingSync(payload);
     return { ok: false, mode: 'queued', error: err.message };
+  }
+}
+
+/* True if a submission for this invite code is still waiting to reach the backend */
+export function hasPendingSync(invite_code) {
+  if (!invite_code) return false;
+  try {
+    const q = JSON.parse(localStorage.getItem(PENDING_KEY) || '[]');
+    return q.some(p => p && p.invite_code === invite_code);
+  } catch {
+    return false;
   }
 }
 
@@ -103,7 +126,8 @@ export async function drainPendingSyncs() {
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       });
-      if (res.ok) drained++; else remaining.push(payload);
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && json.ok !== false) drained++; else remaining.push(payload);
     } catch { remaining.push(payload); }
   }
   localStorage.setItem(PENDING_KEY, JSON.stringify(remaining));

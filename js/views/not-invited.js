@@ -27,9 +27,9 @@ export async function render(root) {
           <h2 style="color:var(--c-red);margin-top:0">Please use your personalised invitation link</h2>
           <p>This site is for our wedding guests. Your invitation link &mdash; sent to you by Shivanie or Theo on WhatsApp &mdash; will look something like:</p>
           <p style="margin:var(--sp-5) 0">
-            <code style="background:var(--c-cream-warm);padding:.6em 1em;border-radius:.5em;font-size:1.05em;letter-spacing:.05em">shivanieandtheo.co.za/?i=K7M2QH</code>
+            <code style="background:var(--c-cream-warm);padding:.6em 1em;border-radius:.5em;font-size:1.05em;letter-spacing:.05em">naickert.github.io/shivanie-theo-wedding/?i=K7M2QHX3PV</code>
           </p>
-          <p>If you have your invite link, please open it directly. If you have only the 6-character code, you can enter it below.</p>
+          <p>If you have your invite link, please open it directly. If you have only the 10-character code, you can enter it below.</p>
 
           <form id="code-entry" style="display:flex;gap:var(--sp-3);justify-content:center;flex-wrap:wrap;margin-top:var(--sp-5);max-width:420px;margin-left:auto;margin-right:auto">
             <label for="invite-code-input" class="visually-hidden">Invite code</label>
@@ -41,14 +41,14 @@ export async function render(root) {
               autocapitalize="characters"
               spellcheck="false"
               autocomplete="off"
-              maxlength="6"
-              placeholder="e.g. K7M2QH"
+              maxlength="16"
+              placeholder="e.g. K7M2QHX3PV"
               style="text-transform:uppercase;letter-spacing:.15em;text-align:center;font-family:var(--ff-serif);flex:1 1 100%;width:100%"
               aria-describedby="code-help"
             />
             <button type="submit" class="btn btn--block">Open invite</button>
           </form>
-          <p id="code-help" class="field__hint" style="margin-top:var(--sp-3)">6 letters and numbers, no spaces.</p>
+          <p id="code-help" class="field__hint" style="margin-top:var(--sp-3)">10 letters and numbers &mdash; spaces are ignored.</p>
           <p id="code-error" class="field__error" style="margin-top:var(--sp-3);min-height:1.5em" aria-live="polite"></p>
         </div>
 
@@ -89,10 +89,13 @@ export async function render(root) {
     }
   });
 
-  // Auto-uppercase as the user types
+  // Auto-uppercase and strip spaces/dashes as the user types or pastes
+  // (maxlength is 16 so a pasted "K7M2Q HX3PV" isn't truncated before cleaning).
   input?.addEventListener('input', () => {
-    const start = input.selectionStart;
-    input.value = input.value.toUpperCase();
-    input.setSelectionRange(start, start);
+    const cleaned = input.value.toUpperCase().replace(/[^0-9A-Z]/g, '').slice(0, 10);
+    if (input.value !== cleaned) {
+      input.value = cleaned;
+      input.setSelectionRange(cleaned.length, cleaned.length);
+    }
   });
 }

@@ -2,19 +2,23 @@
 
 const CROCKFORD = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
 
+/* Codes are 10 chars: 9 random Crockford chars + 1 mod-37 check char
+   (≈45 bits of entropy — enough that the public guests.enc.json cannot be
+   brute-forced offline; at 6 chars it could be). */
+export const CODE_LENGTH = 10;
+
 export function isPlausibleCode(raw) {
   if (!raw) return false;
   const code = String(raw).toUpperCase().trim();
-  if (code.length !== 6) return false;
+  if (code.length !== CODE_LENGTH) return false;
   return [...code].every(ch => CROCKFORD.includes(ch));
 }
 
-/* Crockford mod-37 check char.
-   Generated codes have 5 random + 1 check char. */
-export function checkCharFor(prefix5) {
+/* Crockford mod-37 check char over the 9 random chars. */
+export function checkCharFor(prefix) {
   const sym = '0123456789ABCDEFGHJKMNPQRSTVWXYZ*~$=U';  // 37 symbols
   let sum = 0;
-  for (const ch of prefix5) {
+  for (const ch of prefix) {
     const idx = CROCKFORD.indexOf(ch);
     sum = (sum * 32 + idx) % 37;
   }
@@ -24,18 +28,20 @@ export function checkCharFor(prefix5) {
 export function isValidCode(raw) {
   if (!isPlausibleCode(raw)) return false;
   const code = String(raw).toUpperCase().trim();
-  const expectedCheck = checkCharFor(code.slice(0, 5));
-  // Accept either the check char as-is OR any plausible Crockford char (the guests.json is the truth in prototype; production should enforce check)
-  return code[5] === expectedCheck || true;  // soft-check for prototype
+  return code[CODE_LENGTH - 1] === checkCharFor(code.slice(0, CODE_LENGTH - 1));
 }
 
-/* Generate a code: 5 random Crockford chars + check char */
+/* Generate a code: 9 random Crockford chars + check char. Retried until the
+   check char itself lands in the Crockford set so isPlausibleCode accepts it. */
 export function generateCode(rand = crypto) {
-  let prefix = '';
-  const buf = new Uint8Array(5);
-  rand.getRandomValues(buf);
-  for (const b of buf) prefix += CROCKFORD[b % 32];
-  return prefix + checkCharFor(prefix);
+  for (;;) {
+    let prefix = '';
+    const buf = new Uint8Array(CODE_LENGTH - 1);
+    rand.getRandomValues(buf);
+    for (const b of buf) prefix += CROCKFORD[b % 32];
+    const check = checkCharFor(prefix);
+    if (CROCKFORD.includes(check)) return prefix + check;
+  }
 }
 
 /* Encrypted guest list.

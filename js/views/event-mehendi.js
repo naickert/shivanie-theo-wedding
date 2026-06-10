@@ -22,6 +22,9 @@ export async function render(root) {
         <div class="motif-strip" aria-hidden="true"></div>
 
         <h2>The Day</h2>
+        <p>Immediate family gather from <strong>09:00</strong> for the pooja and the bridal henna.
+        All other guests are warmly invited from <strong>14:00</strong>, when the henna artists
+        open to everyone and the afternoon settles into refreshments, music and conversation.</p>
         <ul class="timeline">
           <li class="timeline__item">
             <span class="timeline__time">09:00</span>
@@ -65,14 +68,14 @@ export async function render(root) {
 
         <div class="info-panel">
           <p class="info-panel__label">Dress code</p>
-          <p class="info-panel__body">Light cottons in festive colours. If you have Indian wear, this is the day for it. Avoid white and anything you&rsquo;d be heartbroken to stain (henna travels). Flat shoes &mdash; you&rsquo;ll sit on the floor for parts of the evening.</p>
+          <p class="info-panel__body">Light cottons in festive colours. If you have Indian wear, this is the day for it. Avoid white and anything you&rsquo;d be heartbroken to stain (henna travels). Flat shoes &mdash; you&rsquo;ll sit on the floor for parts of the day.</p>
         </div>
 
         <div class="info-panel">
           <p class="info-panel__label">Venue</p>
           <p class="info-panel__body">${invited
-            ? 'At the bride&rsquo;s home in Durban. The full address is in your personalised invitation link.'
-            : 'At the bride&rsquo;s home in Durban. The exact address is shared in your personalised invitation link to keep things safe and small.'}</p>
+            ? 'At the bride&rsquo;s home in Durban. We&rsquo;ll send you the full address directly on WhatsApp closer to the day &mdash; if you need it sooner, just message Shivanie or Theo.'
+            : 'At the bride&rsquo;s home in Durban. The exact address is shared privately with invited guests to keep things safe and small.'}</p>
         </div>
 
         <div class="info-panel">

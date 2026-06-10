@@ -41,7 +41,7 @@ export async function render(root) {
 
         <details class="faq-item">
           <summary>How do I RSVP?</summary>
-          <div class="faq-item__body">Click the personalised invitation link we sent you (or open the original message and tap the link). It opens an RSVP form pre-filled with your party&rsquo;s names. If you can&rsquo;t find the link, please get in touch and we&rsquo;ll resend.</div>
+          <div class="faq-item__body">Click the personalised invitation link we sent you (or open the original message and tap the link). It opens an RSVP form set up for your party &mdash; just answer per event and tap submit. If you can&rsquo;t find the link, please get in touch and we&rsquo;ll resend.</div>
         </details>
 
         <details class="faq-item">
@@ -71,17 +71,17 @@ export async function render(root) {
 
         <details class="faq-item">
           <summary>What&rsquo;s the wet-weather plan?</summary>
-          <div class="faq-item__body">The ceremony is outdoors in the Maroupi gardens, but a fully covered marquee and an indoor pivot are on standby. The ceremony starts on time, rain or shine. The reception is always indoors.</div>
+          <div class="faq-item__body">The ceremony is outdoors in the Maroupi gardens. If the skies open &mdash; and December in KZN does love an afternoon shower &mdash; proceedings move under cover at the venue and the ceremony starts on time, rain or shine. The reception is always indoors.</div>
         </details>
 
         <details class="faq-item">
           <summary>Will there be an open bar?</summary>
-          <div class="faq-item__body">Yes &mdash; open bar at the Nalangu &amp; Sangeeth and the Wedding &amp; Reception. The Mehendi is a softer, family afternoon with soft drinks, tea and refreshments.</div>
+          <div class="faq-item__body">There will be a bar at the Wedding &amp; Reception. Bar arrangements for the Nalangu &amp; Sangeeth at Kendra Hall are being finalised &mdash; we&rsquo;ll confirm here closer to the time. The Mehendi is a softer, family afternoon with soft drinks, tea and refreshments.</div>
         </details>
 
         <details class="faq-item">
           <summary>Who do I contact if I have a question?</summary>
-          <div class="faq-item__body">Please reach out to our wedding planner: [TODO: confirm planner contact &mdash; name, WhatsApp number, email]. For anything urgent or personal, feel free to message Shivanie or Theo directly.</div>
+          <div class="faq-item__body">Message Shivanie or Theo directly on WhatsApp &mdash; whoever sent you your invitation link. We&rsquo;ll share our wedding planner&rsquo;s contact details here closer to the time for day-of questions.</div>
         </details>
 
         <p style="margin-top:var(--sp-8); text-align:center">

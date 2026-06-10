@@ -32,7 +32,7 @@ This is the official wedding website for Theo Naicker & Shivanie's three-day Tam
 - Personalised invite-link system (`?i=CODE`) that hydrates a party object and gates content per-event.
 - RSVP form with: per-event attendance, per-guest dietary requirements, message to couple, song requests.
 - Local-first persistence with optional Google Apps Script backend (Google Sheet as the system of record).
-- Admin dashboard at `/admin/` — passphrase-gated; totals, parties × events grid, CSV export.
+- Admin dashboard at `/admin/` — passphrase-gated; totals, parties × events grid, CSV export. **Local-only: gitignored, never deployed** (live responses are reviewed in the Google Sheet).
 - Bilingual Tamil/English chrome (titles, key cultural terms).
 - Mobile-first, WCAG AA, prefers-reduced-motion honoured.
 - Print stylesheet (for the couple to print attendance lists).
@@ -204,7 +204,7 @@ This is the file the couple maintain. Generated with `tools/generate-codes.html`
   "parties": [
     {
       // ---- Identity ----
-      "invite_code":     "K7M2QH",       // 6 chars, Crockford base32, last char is mod-37 check
+      "invite_code":     "K7M2QHX3PV",   // 10 chars, Crockford base32, last char is mod-37 check
       "party_name":      "Naidoo family", // How we address them on the welcome banner
       "household":       "Naidoo",        // For grouping on admin (surname / household label)
 
@@ -231,7 +231,7 @@ This is the file the couple maintain. Generated with `tools/generate-codes.html`
 
 **Field notes:**
 
-- `invite_code` is uppercase Crockford base32, exactly 6 characters. The 6th character is a mod-37 check char (see §7). Codes are case-insensitive on lookup.
+- `invite_code` is uppercase Crockford base32, exactly 10 characters (9 random ≈45 bits + mod-37 check char, see §7). Codes are case-insensitive on lookup. (Regenerated 2026-06-10 from the original 6-char format, which was offline-brute-forceable.)
 - `guests[]` is the source of truth for headcount. Each guest gets their own row in the RSVP form for dietary input.
 - `events_invited` controls which event pages show the "You're invited" badge and which events the RSVP form lists.
 - `plus_one_allowed` is rare and used sparingly (it complicates catering counts).
@@ -241,7 +241,7 @@ This is the file the couple maintain. Generated with `tools/generate-codes.html`
 
 ```jsonc
 {
-  "invite_code":   "K7M2QH",
+  "invite_code":   "K7M2QHX3PV",
   "party_name":    "Naidoo family",
   "submitted_by":  "Priya Naidoo",
   "responses": [
@@ -272,32 +272,30 @@ This is the file the couple maintain. Generated with `tools/generate-codes.html`
 ### Format
 
 - **Alphabet:** Crockford base32 — `0123456789ABCDEFGHJKMNPQRSTVWXYZ` (no `I`, `L`, `O`, `U` to avoid visual confusion).
-- **Length:** 6 characters.
-- **Structure:** 5 random characters + 1 mod-37 check character.
+- **Length:** 10 characters (9 random + 1 check; ≈45 bits).
+- **Structure:** 9 random characters + 1 mod-37 check character (generation retries until the check char lands in the Crockford set).
 - **Case:** Codes are stored uppercase. Lookups are case-insensitive (`toUpperCase().trim()`).
 
 ### Check character
 
-Defined in `js/guests.js#checkCharFor`. Takes the first 5 chars, treats each as its Crockford base32 value (0–31), computes `sum = (sum * 32 + idx) mod 37`, and indexes into the 37-symbol alphabet `0123456789ABCDEFGHJKMNPQRSTVWXYZ*~$=U`. This catches single-character typos and most transpositions.
-
-Note: in the prototype, validation is *soft* — invalid check chars are accepted if the code exists in `guests.json`. Production should enforce the check.
+Defined in `js/guests.js#checkCharFor`. Takes the first 9 chars, treats each as its Crockford base32 value (0–31), computes `sum = (sum * 32 + idx) mod 37`, and indexes into the 37-symbol alphabet `0123456789ABCDEFGHJKMNPQRSTVWXYZ*~$=U`. This catches single-character typos and most transpositions. `isValidCode` enforces the check strictly.
 
 ### URL format
 
 ```
-https://shivanieandtheo.co.za/?i=K7M2QH
+https://shivanieandtheo.co.za/?i=K7M2QHX3PV
 ```
 
 The code is read by `js/guests.js#getInviteCodeFromUrl` on bootstrap. The query parameter survives across hash route changes.
 
 ### Generation
 
-Use `tools/generate-codes.html` in a browser. Paste the guest list (one party per row), get back the same list with a fresh, unique 6-char code per party. Codes are generated with `crypto.getRandomValues` (cryptographically random) so collisions across ~200 parties are astronomically unlikely.
+Use `tools/generate-codes.html` in a browser. Paste the guest list (one party per row), get back the same list with a fresh, unique 10-char code per party. Codes are generated with `crypto.getRandomValues` (cryptographically random) so collisions across ~200 parties are astronomically unlikely.
 
 ### Privacy considerations
 
 - Codes are **per-party, not per-guest** — guests within a party share a link.
-- Codes are short and guessable in theory (32^5 ≈ 33M combinations, mod-37 check). This is fine for our threat model (a wedding, not a bank). Worst case: someone gets the wrong link and sees event details for a party they don't belong to.
+- At 10 chars (32^9 ≈ 3.5×10¹³ combinations, ≈45 bits) codes are not brute-forceable against the public `guests.enc.json`, even offline with GPUs. (The original 6-char format ≈25 bits was crackable in under an hour on one GPU — codes were regenerated 2026-06-10.) Worst case for a leaked single link: that party's own event details only.
 - The bride's home address is only rendered when the URL's invite code resolves to a party invited to the Mehendi.
 - `noindex, nofollow` on the site, plus `robots.txt` `Disallow: /`, keeps invite URLs out of search engines.
 - `data/guests.json` should be **gitignored** in any public mirror. If hosting the source on a private GitHub repo (recommended), it can stay tracked.
@@ -306,7 +304,7 @@ Use `tools/generate-codes.html` in a browser. Paste the guest list (one party pe
 
 ## 8. RSVP flow (step-by-step UX)
 
-1. Guest taps WhatsApp link → opens `https://shivanieandtheo.co.za/?i=K7M2QH`.
+1. Guest taps WhatsApp link → opens `https://shivanieandtheo.co.za/?i=K7M2QHX3PV`.
 2. App bootstraps, reads `?i=`, fetches `data/guests.json`, finds party. Stashes party in state.
 3. **Welcome banner** appears under the header: "Vanakkam, *Naidoo family* — Open your invitation ›"
 4. Guest clicks RSVP (banner CTA, header CTA, or home CTA).
@@ -411,9 +409,9 @@ Execute in order. Each step ends with a smoke-test action. *Time estimate: ~90 m
     - (b) Party invited to **ceremony + nalangu only** — Mehendi should *not* show the badge or the bride's address.
     - (c) Party invited to **ceremony only** — only one event on RSVP form.
     - (d) Party with `plus_one_allowed: true` — RSVP form shows the +1 field.
-    - (e) **Bad code** (`?i=ZZZZZZ`) — no welcome banner; RSVP page shows the "we don't recognise this link" message.
+    - (e) **Bad code** (`?i=ZZZZZZZZZZ`) — no welcome banner; RSVP page shows the "we don't recognise this link" message.
     - For each: submit a test RSVP and confirm a row appears in the Sheet's `Submissions` tab.
-11. **Admin dashboard test.** Open `shivanieandtheo.co.za/admin/` → enter passphrase → confirm the test RSVPs from step 10 are visible. Export CSV.
+11. **Admin dashboard test.** Open `/admin/` on the **local dev server** (it does not deploy) → enter passphrase → confirm locally-imported test RSVPs render. Live submissions are checked in the Google Sheet.
 12. **Delete the test submissions** from the Sheet (or move to a `Test` tab).
 13. **Sleep on it.** Don't send anything yet. Re-open the site the next morning on a different device.
 14. **Send Save the Dates** (`whatsapp-templates/01-save-the-date.md`) — *July 2026 latest*.

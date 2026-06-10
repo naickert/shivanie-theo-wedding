@@ -1,6 +1,14 @@
 /* Registry */
 
+async function loadConfig() {
+  try {
+    const res = await fetch('data/config.json', { cache: 'no-cache' });
+    return res.ok ? await res.json() : {};
+  } catch { return {}; }
+}
+
 export async function render(root) {
+  const config = await loadConfig();
   root.innerHTML = `
     <section class="section">
       <div class="container">
@@ -20,9 +28,15 @@ export async function render(root) {
           <article class="card card--ornate">
             <h2 style="color:var(--c-red); margin-top:0">Honeymoon Fund</h2>
             <p>If you&rsquo;d still like to mark the day with something practical, we&rsquo;re putting together a small honeymoon after the celebrations settle. A contribution toward that &mdash; a meal, a sunset, a long-awaited rest &mdash; would be lovingly received.</p>
-            <p style="margin-top:var(--sp-5)">
-              <a href="#" class="btn">[TODO: confirm honeymoon fund link]</a>
-            </p>
+            ${config.honeymoon_fund_url ? `
+              <p style="margin-top:var(--sp-5)">
+                <a href="${config.honeymoon_fund_url}" class="btn" target="_blank" rel="noopener">Contribute to the honeymoon</a>
+              </p>
+            ` : `
+              <p style="margin-top:var(--sp-5); font-style:italic; color:var(--c-ink-soft)">
+                We&rsquo;re still setting the fund up &mdash; the link will appear right here once it&rsquo;s ready.
+              </p>
+            `}
           </article>
         </div>
 

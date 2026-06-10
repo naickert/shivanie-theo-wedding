@@ -29,12 +29,12 @@ Apps Script wins because: it's owned by us, it's free for our volume, the Sheet 
 
 ### Tab 1 — `Submissions` (auto-created; append-only history)
 
-For reference, the script writes these columns (one row per submit; latest wins in `doGet`):
+For reference, the script writes these columns (one row per submit, append-only — the **latest row per code is the current answer**):
 
 | # | Header | Example |
 |---|---|---|
 | A | `submitted_at` | `2026-11-02T18:44:12.000Z` |
-| B | `invite_code` | `K7M2QH` |
+| B | `invite_code` | `K7M2QHX3PV` |
 | C | `party_name` | `The Naidoo Family` |
 | D | `invited_count` | `4` |
 | E | `mehendi_status` | `no` |
@@ -50,13 +50,13 @@ For reference, the script writes these columns (one row per submit; latest wins 
 | O | `payload_json` | `{...full JSON audit trail...}` |
 | P | `user_agent` | `Mozilla/5.0 ...` |
 
-### Tab 2 — `Parties` — OPTIONAL (junk rejection)
+### Tab 2 — `Parties` — STRONGLY RECOMMENDED (junk rejection)
 
-Add this tab only if you want the backend to **reject submissions from codes not on your guest list**. If the tab exists and has rows, the script checks the posted `invite_code` against **column A** and rejects unknown ones; if the tab is absent or empty, all submissions are accepted (the client already gated entry by decrypting the invite). Mirror it from `data/guests.json`:
+Populate this tab so the backend **rejects submissions from codes not on your guest list**. The `/exec` endpoint is necessarily public (the static site must POST to it), so without this list anyone who discovers the URL can write junk rows. If the tab exists and has rows, the script checks the posted `invite_code` against **column A** and rejects unknown ones; if the tab is absent or empty, all submissions are accepted. Mirror it from `data/guests.json`:
 
 | Column | Header | Example |
 |---|---|---|
-| A | `invite_code` | `K7M2QH` |
+| A | `invite_code` | `K7M2QHX3PV` |
 | B | `party_name` | `Naidoo family` |
 | C | `household` | `Naidoo` |
 | D | `headcount` | `3` |
@@ -69,7 +69,7 @@ You can paste this in by hand or generate it from `data/guests.json` using a sim
 
 ### Tab 3 — `Live` — OPTIONAL (not required)
 
-You can skip this entirely: the `doGet` endpoint already computes a latest-per-code roll-up directly from `Submissions`. Only build this tab if you'd also like a formula-driven view inside the Sheet itself. Suggested formulas (row 2 of each column, fill down):
+Build this tab if you'd like a formula-driven latest-per-code view inside the Sheet itself. (The script deliberately has **no `doGet`** — a public read endpoint would let anyone dump guest RSVP data — so the Sheet is where you review responses.) Suggested formulas (row 2 of each column, fill down):
 
 - A: `=Parties!A2` (invite_code)
 - B: `=Parties!B2` (party_name)
@@ -160,17 +160,9 @@ function doPost(e) {
   }
 }
 
-function doGet() {
-  try {
-    const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_SUBMISSIONS);
-    if (!sheet || sheet.getLastRow() < 2) return _json({ ok: true, rows: [], generated_at: new Date().toISOString() });
-    const values = sheet.getDataRange().getValues();
-    const headers = values.shift();
-    const byCode = {};
-    values.forEach(r => { const o = {}; headers.forEach((h, i) => o[h] = r[i]); byCode[o.invite_code] = o; });
-    return _json({ ok: true, rows: Object.keys(byCode).map(k => byCode[k]), generated_at: new Date().toISOString() });
-  } catch (err) { return _json({ ok: false, error: String(err) }); }
-}
+// NOTE: deliberately no doGet(). The deployment must allow "Anyone" so the
+// static site can POST, which means any GET handler would be a public,
+// unauthenticated read of guest RSVP data. Review responses in the Sheet.
 
 function _sheetWithHeaders(ss, name) {
   let sheet = ss.getSheetByName(name);
@@ -234,17 +226,11 @@ Pages project → **Custom domains** → **Set up a custom domain** → enter `s
 
 ---
 
-## 5. (Optional) Gate `/admin/` with Cloudflare Access
+## 5. The `/admin/` dashboard is local-only — never deployed
 
-The `/admin/` page has a client-side passphrase gate, which is fine for "keep curious guests out" but not for "keep determined attackers out". If you want real auth (free, easy):
+`admin/` (and `tools/generate-codes.html`, `tools/preview-link.html`) are **gitignored and never ship to the public site**. The client-side passphrase gate is convenience, not security — anyone can read client JS — so these pages only run on the couple's own machine via the local dev server (`npx serve` or similar), next to the private `data/guests.json`.
 
-1. Cloudflare dashboard → **Zero Trust** → **Access** → **Applications** → **Add application** → **Self-hosted**.
-2. Application domain: `shivanieandtheo.co.za` · path: `/admin/*`.
-3. Identity providers: **One-time PIN** (email).
-4. Policy: allow `naickert@gmail.com` + Shivanie's email + (optionally) the planner.
-5. Save. Now `/admin/*` requires a one-time PIN to access. The client-side passphrase becomes a belt-and-braces second factor.
-
-Cost: free for up to 50 users on the Zero Trust free plan.
+If you ever decide to deploy an online admin view, put it behind real auth first (e.g. Cloudflare Access one-time PIN on `/admin/*`, allowing only `naickert@gmail.com` + Shivanie's email). Until then: review RSVPs in the Google Sheet, which is already protected by your Google login.
 
 ---
 
@@ -268,7 +254,7 @@ Estimated time: **90 minutes**. Work top to bottom.
 
 | # | Step | Time |
 |---|---|---|
-| 1 | Replace `[TODO: confirm with couple]` content in `js/views/story.js` | 20 min |
+| 1 | Write the real "How We Met" / "Proposal" stories in `js/views/story.js` (live site currently shows graceful "coming soon" notes) | 20 min |
 | 2 | Add real photos to `assets/photos/` and reference from home/story | 10 min |
 | 3 | Build `data/guests.json` via `tools/generate-codes.html` and save | 20 min |
 | 4 | Register `shivanieandtheo.co.za` on Cloudflare Registrar | 5 min |
@@ -279,7 +265,7 @@ Estimated time: **90 minutes**. Work top to bottom.
 | 9 | Paste deployment URL into `data/config.json` (`rsvp_backend_url`) | 1 min |
 | 10 | Push, let Cloudflare Pages deploy | 2 min |
 | 11 | Attach custom domain in Pages | 5 min |
-| 12 | (Optional) wire Cloudflare Access for `/admin/*` | 10 min |
+| 12 | ~~(Optional) wire Cloudflare Access for `/admin/*`~~ — `/admin/` is local-only now (see §5) | — |
 
 ---
 
@@ -290,11 +276,11 @@ Run all of these against the *live* domain (not the `.pages.dev` URL) on a real 
 - [ ] Open `https://shivanieandtheo.co.za/` with **no** invite code → welcome banner is hidden; RSVP button still visible; home page renders.
 - [ ] Open `?i=<valid code, 3 events>` → welcome banner shows party name; all three event cards have "You're invited" badge.
 - [ ] Open `?i=<valid code, ceremony only>` → only the ceremony card has the badge; Mehendi page does NOT show the bride's home address.
-- [ ] Open `?i=ZZZZZZ` (bad code) → no welcome banner; RSVP page shows the "we don't recognise this link" notice.
+- [ ] Open `?i=ZZZZZZZZZZ` (bad code) → no welcome banner; RSVP page shows the "we don't recognise this link" notice.
 - [ ] Submit an RSVP → land on `#/thanks` → check a row appears in the Sheet's `Submissions` tab within 2 seconds.
 - [ ] Re-open `#/rsvp` with the same code → form is pre-filled with the previous submission.
 - [ ] Edit the RSVP and re-submit → a *second* row appears in `Submissions` (we keep append-only history; `Live` tab shows the latest).
-- [ ] Open `/admin/` → enter passphrase → totals tile shows the test submissions; CSV export works.
+- [ ] Open `/admin/` on the **local dev server** (it does not deploy) → enter passphrase → totals tile shows any locally-imported test submissions; CSV export works. Live responses are reviewed in the Google Sheet.
 - [ ] Test on iOS Safari (real iPhone) and Chrome Android (real Android) — both should look correct, scroll smoothly, and submit successfully.
 - [ ] Run a Lighthouse audit on home: Performance ≥ 90, Accessibility ≥ 95.
 - [ ] Delete the test submissions from the Sheet before sending invites.
@@ -306,4 +292,4 @@ Run all of these against the *live* domain (not the `.pages.dev` URL) on a real 
 - Keep the `Parties` tab in sync with `data/guests.json`. If you add a party post-launch: append a row in `Parties`, regenerate `data/guests.json` (or hand-edit), commit, push.
 - Once a week, eyeball `Submissions` for any rows with `error` or weird payloads (shouldn't happen but worth checking).
 - Two weeks out, freeze the `Parties` tab and stop accepting new parties (or you'll confuse the caterer).
-- Day-of: keep your phone charged. `/admin/` works on mobile.
+- Day-of: keep your phone charged. The Google Sheet works on mobile for checking responses.

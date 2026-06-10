@@ -20,7 +20,7 @@ export async function render(root) {
 
         <div class="notice notice--warning" style="margin:var(--sp-5) 0">
           <div>
-            <strong>Weather note.</strong> The ceremony is outdoors in the gardens. December in KZN can deliver hot sun (28&ndash;32&deg;C) or short, intense afternoon thunderstorms. A fully covered marquee and an indoor pivot are on standby, so the ceremony will start on time, rain or shine.
+            <strong>Weather note.</strong> The ceremony is outdoors in the gardens. December in KZN can deliver hot sun (28&ndash;32&deg;C) or short, intense afternoon thunderstorms. If the weather turns, proceedings move under cover at the venue &mdash; the ceremony will start on time, rain or shine.
           </div>
         </div>
 

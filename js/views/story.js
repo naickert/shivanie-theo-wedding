@@ -13,14 +13,14 @@ export async function render(root) {
         <article class="stack-lg">
           <section>
             <h2>How We Met</h2>
-            <p>[TODO: confirm with couple] &mdash; a short, warm paragraph from Shivanie &amp; Theo about the first time their paths crossed, where it was, what year, and the small ordinary moment they both still remember.</p>
+            <p>We&rsquo;re writing this one properly &mdash; where it was, what year, and the small ordinary moment we both still remember. It will appear here soon. (Or ask us at the Mehendi; it&rsquo;s a better story told in person.)</p>
           </section>
 
           <div class="motif-strip" aria-hidden="true"></div>
 
           <section>
             <h2>The Proposal</h2>
-            <p>[TODO: confirm with couple] &mdash; the proposal story in the couple&rsquo;s own voice. Where, when, who knew, who was hiding, and (importantly) what Shivanie was wearing.</p>
+            <p>This one deserves more than a placeholder, so we&rsquo;re saving it until it&rsquo;s written in our own words. Check back soon &mdash; it&rsquo;s worth the wait.</p>
           </section>
 
           <div class="motif-strip" aria-hidden="true"></div>

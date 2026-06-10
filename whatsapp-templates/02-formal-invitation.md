@@ -10,7 +10,7 @@
 
 - `{{guest_name}}` — full party name as you'd address them, e.g. "Naidoo family" or "Priya & Dev"
 - `{{events_invited_list}}` — comma-separated list of events the party is invited to, e.g. "Mehendi, Nalangu & Sangeeth, and the Wedding & Reception"
-- `{{invite_link}}` — personalised link, e.g. `https://shivanieandtheo.co.za/?i=K7M2QH`
+- `{{invite_link}}` — personalised link, e.g. `https://naickert.github.io/shivanie-theo-wedding/?i=K7M2QHX3PV`
 
 ---
 
@@ -36,7 +36,7 @@ You're invited to: *{{events_invited_list}}* 🎉
 Your personalised invite — with full details, dress code, directions, and your RSVP — is here:
 {{invite_link}}
 
-Please RSVP by *Sunday, 8 November 2026* so we can plan everything just right.
+Please RSVP by *Saturday, 31 October 2026* so we can plan everything just right.
 
 This link is just for you — please don't share it on. If anyone in your party needs their own link, let us know.
 

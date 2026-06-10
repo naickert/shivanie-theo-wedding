@@ -21,7 +21,7 @@ Then open **http://localhost:8765** in your browser.
 
 The prototype ships with a sample guest list. Try:
 
-- **All three events** (the Naidoo family): http://localhost:8765/?i=K7M2QH
+- **All three events**: http://localhost:8765/?i=<code from data/guests.json>
 - The welcome banner should appear, and each event card on the home page should show a *You're invited* badge.
 
 Other categories of invite (mehendi-only, ceremony-only, plus-one, bad code) live in `data/guests.json` — open the file to see codes and what they're invited to.
@@ -34,7 +34,7 @@ Other categories of invite (mehendi-only, ceremony-only, plus-one, bad code) liv
 Open tools/generate-codes.html directly in your browser.
 ```
 
-Paste the guest list (one party per row, with members and events-invited) into the textarea. Click **Generate**. Copy the resulting JSON into `data/guests.json` (back up the file first). Each party gets a unique 6-character Crockford-base32 code with a check character.
+Paste the guest list (one party per row, with members and events-invited) into the textarea. Click **Generate**. Copy the resulting JSON into `data/guests.json` (back up the file first). Each party gets a unique 10-character Crockford-base32 code (9 random chars ≈45 bits + a mod-37 check character).
 
 ### ⚠️ Then encrypt before deploying (the site is hosted publicly)
 
@@ -48,11 +48,11 @@ This writes `data/guests.enc.json`, where each party's **guest-facing fields onl
 
 ---
 
-## View the admin dashboard
+## View the admin dashboard (local only)
 
 http://localhost:8765/admin/
 
-Passphrase-gated client-side. Shows RSVP totals, party × event grid, and CSV / JSON export. In production, also pulls live data from the Google Sheet via the Apps Script `doGet` endpoint.
+Passphrase-gated client-side. Shows RSVP totals, party × event grid, and CSV / JSON export from locally-stored/imported submissions. **`admin/` is gitignored and never deploys to the public site** — a client-side gate isn't real security. Live RSVP responses are reviewed directly in the Google Sheet (the Apps Script deliberately has no `doGet`: a public read endpoint would expose guest data).
 
 ---
 
@@ -75,8 +75,8 @@ Passphrase-gated client-side. Shows RSVP totals, party × event grid, and CSV / 
 │   ├── guests.json         Parties + invite codes — PRIVATE, gitignored, local only
 │   └── guests.enc.json     Encrypted guest list (the only one deployed)
 ├── assets/                 Fonts, icons, motifs, photos
-├── admin/                  Dashboard
-├── tools/                  generate-codes.html
+├── admin/                  Dashboard — LOCAL ONLY, gitignored, never deployed
+├── tools/                  generate-codes.html, preview-link.html (local only) + apps-script/Code.gs
 ├── whatsapp-templates/     8 markdown templates for the couple
 ├── email-templates/        (out of scope v1 — see README inside)
 └── docs/

@@ -59,7 +59,7 @@ export async function render(root) {
           <div class="notice notice--warning" role="alert" aria-live="polite">
             <div>
               <strong>This link doesn&rsquo;t recognise a guest.</strong>
-              <p style="margin:.5em 0 0">Please reopen the original message we sent you. Your link should look like <code>?i=K7M2QH</code> at the end of the address.</p>
+              <p style="margin:.5em 0 0">Please reopen the original message we sent you. Your link should look like <code>?i=K7M2QHX3PV</code> at the end of the address.</p>
             </div>
           </div>
           <p style="margin-top:var(--sp-6); text-align:center">
@@ -312,9 +312,11 @@ function wireForm(root, party, eventsForParty, invitedCount) {
     const submitBtn = form.querySelector('#rsvp-submit-btn');
     submitBtn?.setAttribute('disabled', 'disabled');
     try {
-      await submitRSVP(payload);
+      const result = await submitRSVP(payload);
       const finalPayload = loadSubmission(party.invite_code) || payload;
-      setState({ rsvp_submitted: finalPayload });
+      // Carry the send outcome so the thanks page can be honest about whether
+      // the RSVP reached us or is still queued on this device.
+      setState({ rsvp_submitted: finalPayload, rsvp_send_result: result });
       navigate('#/thanks');
     } catch (err2) {
       console.error('submit failed', err2);

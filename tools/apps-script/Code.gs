@@ -4,7 +4,7 @@
  * Matches the REAL client payload produced by js/views/rsvp.js -> js/persist.js:
  *
  *   {
- *     invite_code:   "K7M2QH",
+ *     invite_code:   "K7M2QHX3PV",
  *     party_name:    "The Naidoo Family",
  *     invited_count: 4,
  *     submitted_at:  "2026-11-02T18:44:12.000Z",
@@ -20,8 +20,11 @@
  *
  * doPost: appends one row per submission to the "Submissions" tab (append-only
  *         history; the tab + header row are auto-created on first submit).
- * doGet:  returns the latest submission per invite_code as JSON (handy for a
- *         quick check or a future admin hook). No Live tab/formulas required.
+ *
+ * There is deliberately NO doGet. The web app must be deployed with
+ * "Anyone" access so the static site can POST, which means any GET handler
+ * would be a public, unauthenticated read of guest RSVP data (names, notes,
+ * invite codes). Review the data directly in the Sheet instead.
  *
  * DEPLOY
  *   1. In your RSVP Google Sheet: Extensions > Apps Script.
@@ -32,8 +35,13 @@
  *   4. Authorise when prompted. Copy the Web app URL (.../exec).
  *   5. Paste that URL into data/config.json -> "rsvp_backend_url", commit, push.
  *
- *   (Optional) Add a "Parties" tab with invite codes in column A to reject
- *   submissions from codes that aren't on your guest list — see below.
+ * UPDATE AN EXISTING DEPLOYMENT (keeps the same /exec URL)
+ *   Paste the new code, Save, then Deploy > Manage deployments >
+ *   (pencil) Edit > Version: New version > Deploy.
+ *
+ *   STRONGLY RECOMMENDED: add a "Parties" tab with all valid invite codes in
+ *   column A (header row in row 1). doPost then rejects any submission whose
+ *   code isn't on the list, blocking junk and guessed codes — see below.
  */
 
 const SHEET_SUBMISSIONS = 'Submissions';
@@ -93,26 +101,6 @@ function doPost(e) {
     ]);
 
     return _json({ ok: true, received: code });
-  } catch (err) {
-    return _json({ ok: false, error: String(err) });
-  }
-}
-
-function doGet() {
-  try {
-    const sheet = SpreadsheetApp.getActive().getSheetByName(SHEET_SUBMISSIONS);
-    if (!sheet || sheet.getLastRow() < 2) {
-      return _json({ ok: true, rows: [], generated_at: new Date().toISOString() });
-    }
-    const values = sheet.getDataRange().getValues();
-    const headers = values.shift();
-    const byCode = {};
-    values.forEach(r => {
-      const obj = {};
-      headers.forEach((h, i) => { obj[h] = r[i]; });
-      byCode[obj.invite_code] = obj;   // append-only history => last row wins = latest
-    });
-    return _json({ ok: true, rows: Object.keys(byCode).map(k => byCode[k]), generated_at: new Date().toISOString() });
   } catch (err) {
     return _json({ ok: false, error: String(err) });
   }

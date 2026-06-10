@@ -25,7 +25,7 @@ export async function render(root) {
 
         <div class="info-panel">
           <p class="info-panel__label">Hotel recommendations</p>
-          <p class="info-panel__body">[TODO: confirm hotel block &mdash; preferred rates to follow]</p>
+          <p class="info-panel__body">We&rsquo;re arranging preferred rates with a few hotels on the North Coast and in Umhlanga &mdash; details will appear here as soon as they&rsquo;re confirmed. In the meantime, anywhere in Ballito, Salt Rock, Umhlali or Umhlanga puts you well for the weekend.</p>
         </div>
 
         <div class="motif-strip" aria-hidden="true"></div>
@@ -49,7 +49,7 @@ export async function render(root) {
         <ul>
           <li><strong>Uber</strong> works reliably across Durban and along the North Coast as far as Ballito. Wait times can stretch late in the evening &mdash; plan a 15-min buffer.</li>
           <li><strong>Car hire</strong> is available from all major brands at King Shaka. Recommended if you&rsquo;re planning beach days or staying on the coast.</li>
-          <li><strong>Wedding-day shuttle</strong> &mdash; [TODO: confirm wedding shuttle from a central Durban hotel hub to Maroupi and back].</li>
+          <li><strong>Wedding-day shuttle</strong> &mdash; we&rsquo;re looking into a shuttle from a central Durban hotel hub to Maroupi and back on the Saturday. We&rsquo;ll confirm here and on WhatsApp closer to the date.</li>
         </ul>
 
         <div class="motif-strip" aria-hidden="true"></div>
@@ -66,7 +66,7 @@ export async function render(root) {
         <div class="motif-strip" aria-hidden="true"></div>
 
         <h2>Load-Shedding</h2>
-        <p>South Africa&rsquo;s rolling power cuts are a known quirk. Backup generators are confirmed at all three wedding venues, so the celebration itself is fully covered. If you&rsquo;re booking a self-catering apartment or guesthouse, check with your host that they have backup power for fridges, water and lighting.</p>
+        <p>South Africa&rsquo;s rolling power cuts are a known quirk. We&rsquo;re making sure backup power is arranged for the celebrations, so the party won&rsquo;t skip a beat. If you&rsquo;re booking a self-catering apartment or guesthouse, check with your host that they have backup power for fridges, water and lighting.</p>
 
         <p style="margin-top:var(--sp-8); text-align:center">
           <a href="#/faq" class="btn">Read the FAQ</a>

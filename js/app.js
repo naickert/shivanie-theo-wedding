@@ -59,7 +59,9 @@ async function bootstrap() {
   router.beforeEach(async (path) => {
     const { party } = getState();
     if (!party && path !== '/not-invited') {
-      router.navigate('/not-invited');
+      // replace: guard redirects must not pile up history entries,
+      // or the back button can never leave the site
+      router.navigate('/not-invited', { replace: true });
       // throw to abort the original handler
       throw new Error('redirect');
     }

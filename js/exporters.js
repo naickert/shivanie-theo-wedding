@@ -116,7 +116,7 @@ const ICS_EVENT_TIMES = {
     end_utc:   '20261217T160000Z', // 18:00 SAST
     title:     'Mehendi — Shivanie & Theo',
     location:  "Bride's home, Durban",
-    desc:      'An intimate evening of henna, song and family.'
+    desc:      'An intimate day of henna, song and family. Guests are welcome from 14:00.'
   },
   nalangu: {
     start_utc: '20261218T150000Z', // 17:00 SAST
@@ -143,8 +143,26 @@ function icsEscape(str) {
 }
 
 function icsUid(evId, code) {
+  // Stable per event+guest: re-downloading after an RSVP update replaces the
+  // calendar entry instead of duplicating it.
   const safeCode = String(code || 'guest').toLowerCase().replace(/[^a-z0-9]/g, '');
-  return `${evId}-${safeCode}-${Date.now().toString(36)}@shivanieandtheo`;
+  return `${evId}-${safeCode}@shivanieandtheo`;
+}
+
+/* RFC 5545 §3.1 — content lines longer than 75 octets must be folded with
+   CRLF + a single space. We fold conservatively at 74 characters. */
+function foldIcsLine(line) {
+  if (line.length <= 74) return line;
+  const parts = [];
+  let rest = line;
+  parts.push(rest.slice(0, 74));
+  rest = rest.slice(74);
+  while (rest.length > 73) {
+    parts.push(' ' + rest.slice(0, 73));
+    rest = rest.slice(73);
+  }
+  if (rest.length) parts.push(' ' + rest);
+  return parts.join('\r\n');
 }
 
 function icsTimestampNow() {
@@ -159,7 +177,9 @@ function icsTimestampNow() {
  * @param {Array}   events    — event ids the party accepted (e.g. ['mehendi','ceremony'])
  *                              OR full event metadata array (we accept either; we use ids only)
  * @param {object}  party     — party object (for code + party_name)
- * @param {Array<string>} attending — list of attendee names (joined into description)
+ * @param {Array<string>|Object} attending — attendee descriptors: either one
+ *                              array used for every event, or a map of
+ *                              event id -> array (counts can differ per event)
  */
 export function buildIcsForEvents(events, party, attending) {
   const ids = (events || []).map(e => (typeof e === 'string' ? e : e.id)).filter(Boolean);
@@ -178,8 +198,11 @@ export function buildIcsForEvents(events, party, attending) {
   for (const id of ids) {
     const meta = ICS_EVENT_TIMES[id];
     if (!meta) continue;
-    const attendeeLine = Array.isArray(attending) && attending.length
-      ? `\n\nAttending from ${partyName || 'your party'}: ${attending.join(', ')}`
+    const attendees = Array.isArray(attending)
+      ? attending
+      : (attending && Array.isArray(attending[id]) ? attending[id] : []);
+    const attendeeLine = attendees.length
+      ? `\n\nAttending from ${partyName || 'your party'}: ${attendees.join(', ')}`
       : '';
     const desc = `${meta.desc}${attendeeLine}\n\nYour invite code: ${code}`;
     lines.push(
@@ -196,7 +219,7 @@ export function buildIcsForEvents(events, party, attending) {
   }
 
   lines.push('END:VCALENDAR');
-  return lines.join('\r\n');
+  return lines.map(foldIcsLine).join('\r\n');
 }
 
 /** Trigger a browser download of an ICS file. */
