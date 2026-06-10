@@ -23,7 +23,8 @@ function daysUntil(d) {
   const days = Math.floor(ms / day);
   const hours = Math.floor((ms % day) / (60 * 60 * 1000));
   const mins = Math.floor((ms % (60 * 60 * 1000)) / (60 * 1000));
-  return { days, hours, mins };
+  const secs = Math.floor((ms % (60 * 1000)) / 1000);
+  return { days, hours, mins, secs };
 }
 
 export async function render(root) {
@@ -65,9 +66,10 @@ export async function render(root) {
 
         ${cd ? `
         <div class="countdown" aria-label="Countdown to the wedding">
-          <div class="countdown__unit"><span class="countdown__num">${cd.days}</span><span class="countdown__label">Days</span></div>
-          <div class="countdown__unit"><span class="countdown__num">${String(cd.hours).padStart(2,'0')}</span><span class="countdown__label">Hours</span></div>
-          <div class="countdown__unit"><span class="countdown__num">${String(cd.mins).padStart(2,'0')}</span><span class="countdown__label">Mins</span></div>
+          <div class="countdown__unit"><span class="countdown__num" data-cd="days">${cd.days}</span><span class="countdown__label">Days</span></div>
+          <div class="countdown__unit"><span class="countdown__num" data-cd="hours">${String(cd.hours).padStart(2,'0')}</span><span class="countdown__label">Hours</span></div>
+          <div class="countdown__unit"><span class="countdown__num" data-cd="mins">${String(cd.mins).padStart(2,'0')}</span><span class="countdown__label">Mins</span></div>
+          <div class="countdown__unit"><span class="countdown__num" data-cd="secs">${String(cd.secs).padStart(2,'0')}</span><span class="countdown__label">Secs</span></div>
         </div>` : `
         <div class="countdown"><strong style="color:var(--c-red);font-family:var(--ff-serif);font-size:var(--fs-500)">Today is the day. <span lang="ta">திருமணம் வாழ்க!</span></strong></div>
         `}
@@ -123,12 +125,22 @@ let tickHandle = null;
 function tickCountdown(root) {
   clearInterval(tickHandle);
   tickHandle = setInterval(() => {
+    const box = root.querySelector('.countdown');
+    // navigated away — the countdown is gone from this view's DOM
+    if (!box) { clearInterval(tickHandle); return; }
     const cd = daysUntil(WEDDING);
-    if (!cd) { clearInterval(tickHandle); return; }
-    const nums = root.querySelectorAll('.countdown__num');
-    if (nums.length < 3) { clearInterval(tickHandle); return; }
-    nums[0].textContent = cd.days;
-    nums[1].textContent = String(cd.hours).padStart(2,'0');
-    nums[2].textContent = String(cd.mins).padStart(2,'0');
-  }, 30000);  // every 30s is plenty
+    if (!cd) {
+      box.innerHTML = `<strong style="color:var(--c-red);font-family:var(--ff-serif);font-size:var(--fs-500)">Today is the day. <span lang="ta">திருமணம் வாழ்க!</span></strong>`;
+      clearInterval(tickHandle);
+      return;
+    }
+    const set = (key, val) => {
+      const el = box.querySelector(`[data-cd="${key}"]`);
+      if (el && el.textContent !== val) el.textContent = val;
+    };
+    set('days', String(cd.days));
+    set('hours', String(cd.hours).padStart(2, '0'));
+    set('mins', String(cd.mins).padStart(2, '0'));
+    set('secs', String(cd.secs).padStart(2, '0'));
+  }, 1000);
 }
