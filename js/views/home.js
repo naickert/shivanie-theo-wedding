@@ -16,20 +16,31 @@ const EVENT_DEFS = [
     blurb: 'The wedding itself &mdash; a sacred one-hour Tamil ceremony beneath a flower-laden <em>mandap</em>, followed by feast and dance.' },
 ];
 
-function daysUntil(d) {
-  const ms = d.getTime() - Date.now();
-  if (ms <= 0) return null;
-  const day = 24 * 60 * 60 * 1000;
-  const days = Math.floor(ms / day);
-  const hours = Math.floor((ms % day) / (60 * 60 * 1000));
-  const mins = Math.floor((ms % (60 * 60 * 1000)) / (60 * 1000));
-  const secs = Math.floor((ms % (60 * 1000)) / 1000);
-  return { days, hours, mins, secs };
+/* Calendar-accurate add-months (clamps day-of-month overflow, e.g. 31 Jan + 1m). */
+function addMonths(d, n) {
+  const r = new Date(d.getTime());
+  const day = r.getDate();
+  r.setMonth(r.getMonth() + n);
+  if (r.getDate() < day) r.setDate(0);
+  return r;
+}
+
+/* Time to the wedding as whole calendar months + days + hours. */
+function countdownTo(d) {
+  const now = new Date();
+  if (d.getTime() - now.getTime() <= 0) return null;
+  let months = 0;
+  while (addMonths(now, months + 1).getTime() <= d.getTime()) months++;
+  let rest = d.getTime() - addMonths(now, months).getTime();
+  const days = Math.floor(rest / (24 * 60 * 60 * 1000));
+  rest -= days * 24 * 60 * 60 * 1000;
+  const hours = Math.floor(rest / (60 * 60 * 1000));
+  return { months, days, hours };
 }
 
 export async function render(root) {
   const { party } = getState();
-  const cd = daysUntil(WEDDING);
+  const cd = countdownTo(WEDDING);
   const hasInvite = !!party;
   const submission = party ? loadSubmission(party.invite_code) : null;
 
@@ -66,10 +77,9 @@ export async function render(root) {
 
         ${cd ? `
         <div class="countdown" aria-label="Countdown to the wedding">
-          <div class="countdown__unit"><span class="countdown__num" data-cd="days">${cd.days}</span><span class="countdown__label">Days</span></div>
-          <div class="countdown__unit"><span class="countdown__num" data-cd="hours">${String(cd.hours).padStart(2,'0')}</span><span class="countdown__label">Hours</span></div>
-          <div class="countdown__unit"><span class="countdown__num" data-cd="mins">${String(cd.mins).padStart(2,'0')}</span><span class="countdown__label">Mins</span></div>
-          <div class="countdown__unit"><span class="countdown__num" data-cd="secs">${String(cd.secs).padStart(2,'0')}</span><span class="countdown__label">Secs</span></div>
+          <div class="countdown__unit"><span class="countdown__num" data-cd="months">${cd.months}</span><span class="countdown__label" data-cd-label="months">${cd.months === 1 ? 'Month' : 'Months'}</span></div>
+          <div class="countdown__unit"><span class="countdown__num" data-cd="days">${cd.days}</span><span class="countdown__label" data-cd-label="days">${cd.days === 1 ? 'Day' : 'Days'}</span></div>
+          <div class="countdown__unit"><span class="countdown__num" data-cd="hours">${String(cd.hours).padStart(2,'0')}</span><span class="countdown__label" data-cd-label="hours">${cd.hours === 1 ? 'Hour' : 'Hours'}</span></div>
         </div>` : `
         <div class="countdown"><strong style="color:var(--c-red);font-family:var(--ff-serif);font-size:var(--fs-500)">Today is the day. <span lang="ta">திருமணம் வாழ்க!</span></strong></div>
         `}
@@ -128,19 +138,20 @@ function tickCountdown(root) {
     const box = root.querySelector('.countdown');
     // navigated away — the countdown is gone from this view's DOM
     if (!box) { clearInterval(tickHandle); return; }
-    const cd = daysUntil(WEDDING);
+    const cd = countdownTo(WEDDING);
     if (!cd) {
       box.innerHTML = `<strong style="color:var(--c-red);font-family:var(--ff-serif);font-size:var(--fs-500)">Today is the day. <span lang="ta">திருமணம் வாழ்க!</span></strong>`;
       clearInterval(tickHandle);
       return;
     }
-    const set = (key, val) => {
+    const set = (key, val, label) => {
       const el = box.querySelector(`[data-cd="${key}"]`);
       if (el && el.textContent !== val) el.textContent = val;
+      const lab = box.querySelector(`[data-cd-label="${key}"]`);
+      if (lab && lab.textContent !== label) lab.textContent = label;
     };
-    set('days', String(cd.days));
-    set('hours', String(cd.hours).padStart(2, '0'));
-    set('mins', String(cd.mins).padStart(2, '0'));
-    set('secs', String(cd.secs).padStart(2, '0'));
-  }, 1000);
+    set('months', String(cd.months), cd.months === 1 ? 'Month' : 'Months');
+    set('days', String(cd.days), cd.days === 1 ? 'Day' : 'Days');
+    set('hours', String(cd.hours).padStart(2, '0'), cd.hours === 1 ? 'Hour' : 'Hours');
+  }, 30000); // hours-granularity display — 30s keeps it accurate without busywork
 }
